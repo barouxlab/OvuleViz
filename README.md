@@ -1,6 +1,6 @@
-# OvuleViz v1.0
+# OvuleViz
 Graphical interface to analyse segmented cell data
-
+v1.0 09/11/2016
 
 #### To start the analysis run (from an R console):
 library(shiny)</br>
