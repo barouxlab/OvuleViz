@@ -1,5 +1,5 @@
 # OvuleViz
-Graphical interface to analyse segmented cell data
+Graphical interface to analyse segmented cell data</br>
 v1.0 09/11/2016
 
 #### To start the analysis run (from an R console):
