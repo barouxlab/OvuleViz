@@ -40,8 +40,9 @@ for(genotype in list.files()){
         temp$Genotype <- genotype
         temp$Stage <- stage
         temp$Stack <- stack
-        raw.data <- rbind(raw.data, temp)
-      
+        tryCatch(raw.data <- rbind(raw.data, temp), error = function(x){
+          stop(call. = FALSE, c("Cannot import ", stack, " (", genotype, "/", stage, ")"))
+        })
       }
     }
   }
