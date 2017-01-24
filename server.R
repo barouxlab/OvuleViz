@@ -388,7 +388,7 @@ shinyServer(function(input, output, session) {
           geom_line(position = dodge) +
           geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
                         position = dodge, width = 0.2, color = 'grey') +
-          geom_point(size = rel(2), pch = 21, color = 'black', position = dodge) +
+          geom_point(size = rel(4), pch = 21, color = 'black', position = dodge) +
           scale_color_manual(values = colormap(), name = NULL) +
           scale_fill_manual(values = colormap(), name = NULL)
         
