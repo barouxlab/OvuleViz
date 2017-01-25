@@ -57,7 +57,6 @@ shinyUI(
                  #####################
                  h3("Plot elements"),
                  
-                 #uiOutput('Yaxis_sel'),
                  selectInput("Yaxis",
                              label = "Variable:",
                              choices = levels(data$Type)),
@@ -131,7 +130,8 @@ shinyUI(
                              tabPanel('averages',
                                       helpText('Error bars represent standard deviation.'),
                                       uiOutput('UIgetpdf_mn'),
-                                      plotOutput('plotMeans')))
+                                      plotOutput('plotMeans')),
+                             tabPanel('cell number'))
           )
         ))),
     tabPanel("Tables",

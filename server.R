@@ -151,6 +151,7 @@ shinyServer(function(input, output, session) {
                             vars2 = vars2,
                             filt.N.cells.stack)
       return(summary)
+      
     } else x <- vipdata()
     return(x)
   })
@@ -388,9 +389,9 @@ shinyServer(function(input, output, session) {
                                                       group = input$colorize,
                                                       fill = input$colorize)) +
           facet_wrap(input$group, ncol = input$ncols) +
-          geom_line(position = dodge) +
           geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
                         position = dodge, width = 0.2, color = 'grey') +
+          geom_line(position = dodge) +
           geom_point(size = rel(4), pch = 21, color = 'black', position = dodge) +
           scale_color_manual(values = colormap(), name = NULL) +
           scale_fill_manual(values = colormap(), name = NULL)
@@ -404,29 +405,6 @@ shinyServer(function(input, output, session) {
       output$UIgetpdf_mn <- renderUI(tagModal(x = 'getpdf_mn'))
     }
   })
-  
-  
-  ###
-  # output$means <- renderPlot({
-  #   
-  #   dodge <- position_dodge(width=0.3)
-  #   
-  #   p <- ggplot(data = sub_plotdata(), aes_string('Stage', y = 'mean',
-  #                                                 color = input$colorize,
-  #                                                 group = input$colorize,
-  #                                                 fill = input$colorize)) +
-  #     facet_wrap(input$group, ncol = input$ncols) +
-  #     geom_line(position = dodge) +
-  #     geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
-  #                   position = dodge, width = 0.2, color = 'grey') +
-  #     geom_point(size = rel(2), pch = 21, color = 'black', position = dodge) +
-  #     scale_color_manual(values = colormap(), name = NULL) +
-  #     scale_fill_manual(values = colormap(), name = NULL)
-  #   
-  #   ggoptions(p, input$Yaxis, input$logY, input$gtheme)
-  #   
-  # }, height = plheight)
-  
   
   #############################################
   #############################################
@@ -455,7 +433,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    str(vipdata())
+    Sys.time()
   })
   
 })
