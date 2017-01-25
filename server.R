@@ -59,10 +59,10 @@ shinyServer(function(input, output, session) {
                            !levels(data$Labels) %in% input$viewpoint1],
                          select = preval)
   })
-
-
+  
+  
   observe({
-
+    
     preval <- isolate(input$viewpoint3)
     updateSelectizeInput(session, inputId = 'viewpoint3',
                          choices = levels(data$Labels)[
@@ -93,7 +93,7 @@ shinyServer(function(input, output, session) {
                                selected = sel)
   })
   
-
+  
   ####################################################
   # Create vipdata reactive table
   ####################################################
@@ -108,9 +108,14 @@ shinyServer(function(input, output, session) {
                      name_vp1 = input$vp1_name, vp1 = input$viewpoint1,
                      name_vp2 = input$vp2_name, vp2 = input$viewpoint2,
                      name_vp3 = input$vp3_name, vp3 = input$viewpoint3)
-    } else {
+      
+    } else if(input$usevp == 'no'){
+      
       x <- viewpoint(data, name_vp1 = '', vp1 = input$Label,
-                     name_vp2 = NULL, name_vp3 = NULL)  }
+                     name_vp2 = NULL, name_vp3 = NULL)
+    }
+    
+    
     
     # subset based on SMC neighbour tag
     if(input$SMCneighb){
@@ -178,16 +183,15 @@ shinyServer(function(input, output, session) {
     
     
     updateRadioButtons(session, inputId = 'group',
-                   choices = ch,
-                   select = prevVal[1])
+                       choices = ch,
+                       select = prevVal[1])
     
     updateRadioButtons(session, inputId = 'colorize',
-                   choices = ch,
-                   select = prevVal[2])
+                       choices = ch,
+                       select = prevVal[2])
     
     # Update Yaxis selector (e.g. to reflect presence of 'Cell number' in 'averages' tab),
-    # while keeping the previous choice selected.
-    
+    # while keeping the previous choice selected:
     prevVal <- input$Yaxis
     
     updateSelectInput(session, inputId = "Yaxis",
@@ -224,21 +228,11 @@ shinyServer(function(input, output, session) {
     } else{
       
       x <- col.map(data = plotdata(),
-              colorize = input$colorize,
-              brew = input$brewery)
+                   colorize = input$colorize,
+                   brew = input$brewery)
     }
     return(x)
   })
-  
-  #############################################
-  #############################################
-  
-  # output$Yaxis_sel <- renderUI({
-  #   
-  #   selectInput("Yaxis",
-  #               label = "Variable:",
-  #               choices = levels(plotdata()$Type))
-  # })
   
   #############################################
   #############################################
@@ -269,14 +263,14 @@ shinyServer(function(input, output, session) {
   # get value for plot height
   plheight <- reactive(as.numeric(input$plheight))
   
-
+  
   ####################################################
   ####################################################
   
   observe({
-
+    
     if(input$tabs1 == 'boxplot'){
-
+      
       pl_bx <- reactive({
         # Bug? Have to call colormap() here because it was not active inside ggplot function!
         colormap()
@@ -284,11 +278,11 @@ shinyServer(function(input, output, session) {
         p <- p + geom_boxplot(color = 'grey20', group = input$colorize)
         return(p)
       })
-
+      
       output$plotBoxplot <- renderPlot(pl_bx(), height = plheight)
       output$getpdf_bx <- handle(plot = pl_bx(), width = input$getpdf_bx_width,height = input$getpdf_bx_height)
       output$UIgetpdf_bx <- renderUI(tagModal(x = 'getpdf_bx'))
-
+      
     }
   })
   
@@ -341,7 +335,7 @@ shinyServer(function(input, output, session) {
   #   d <- event_data("plotly_selected", source = 'A')$key
   #   if(!is.null(d)) selected <- sub_plotdata()[d,]
   # })
-
+  
   #############################################
   #############################################
   
@@ -432,8 +426,8 @@ shinyServer(function(input, output, session) {
   #   ggoptions(p, input$Yaxis, input$logY, input$gtheme)
   #   
   # }, height = plheight)
-
-
+  
+  
   #############################################
   #############################################
   
@@ -461,7 +455,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    levels(plotdata()$Type)
+    str(vipdata())
   })
   
 })

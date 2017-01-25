@@ -10,12 +10,13 @@ pacman::p_load(shiny, shinythemes, shinyBS, ggplot2, plotly, plyr, RColorBrewer,
 # Import segmented data
 ##############################################################
 
-data <- read.csv2(
-  tk_choose.files(caption = "Import file with segmented data",
-                  multi = FALSE,
-                  filters = matrix(c("csv", ".csv"), 1, 2, byrow = TRUE)),
-  row.names = NULL)
+# data <- read.csv2(
+#   tk_choose.files(caption = "Import file with segmented data",
+#                   multi = FALSE,
+#                   filters = matrix(c("csv", ".csv"), 1, 2, byrow = TRUE)),
+#   row.names = NULL)
 
+data <- read.csv2('~/segmented.csv', row.names = NULL)
 
 ##############################################################
 # Import custom color map
@@ -88,6 +89,10 @@ viewpoint <- function(data = data,
   data[data$Labels %in% vp2, 'Viewpoints'] <- name_vp2
   data[data$Labels %in% vp3, 'Viewpoints'] <- name_vp3
   data <- data[complete.cases(data$Viewpoints),]
+  
+  # change levels of Labels (to allow custom plotting order)
+  data$Labels <- factor(data$Labels, levels = c(vp1, vp2, vp3))
+  
   return(data)
 }
 
