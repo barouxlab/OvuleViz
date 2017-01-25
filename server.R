@@ -184,6 +184,15 @@ shinyServer(function(input, output, session) {
     updateRadioButtons(session, inputId = 'colorize',
                    choices = ch,
                    select = prevVal[2])
+    
+    # Update Yaxis selector (e.g. to reflect presence of 'Cell number' in 'averages' tab),
+    # while keeping the previous choice selected.
+    
+    prevVal <- input$Yaxis
+    
+    updateSelectInput(session, inputId = "Yaxis",
+                      choices = levels(plotdata()$Type),
+                      selected = prevVal)
   })
   
   
@@ -210,7 +219,7 @@ shinyServer(function(input, output, session) {
     
     if(input$customcol & input$colorize == 'Labels'){
       
-      x <- col.map <- customcolmap
+      x <- customcolmap
       
     } else{
       
@@ -224,12 +233,12 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  output$Yaxis_sel <- renderUI({
-    
-    selectInput("Yaxis",
-                label = "Variable:",
-                choices = levels(plotdata()$Type))
-  })
+  # output$Yaxis_sel <- renderUI({
+  #   
+  #   selectInput("Yaxis",
+  #               label = "Variable:",
+  #               choices = levels(plotdata()$Type))
+  # })
   
   #############################################
   #############################################
@@ -452,7 +461,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    names(input)
+    levels(plotdata()$Type)
   })
   
 })

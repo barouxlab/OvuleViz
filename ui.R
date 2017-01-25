@@ -1,12 +1,12 @@
 shinyUI(
   navbarPage(
-    "v1.0.2", theme = shinytheme("cosmo"),
+    "v1.1", theme = shinytheme("cosmo"),
     
     tabPanel(
       "Plots",
       fluidPage(
         fluidRow(
-          
+          textOutput('debug'),
           column(2,
                  
                  #######################
@@ -57,7 +57,10 @@ shinyUI(
                  #####################
                  h3("Plot elements"),
                  
-                 uiOutput('Yaxis_sel'),
+                 #uiOutput('Yaxis_sel'),
+                 selectInput("Yaxis",
+                             label = "Variable:",
+                             choices = levels(data$Type)),
                 
                  radioButtons('group',
                               label = 'Split plots on:',
@@ -125,7 +128,6 @@ shinyUI(
                              tabPanel('histogram',
                                       uiOutput('UIgetpdf_h'),
                                       plotOutput('plotHist')),
-                             #tabPanel('debug', textOutput('debug')),
                              tabPanel('averages',
                                       helpText('Error bars represent standard deviation.'),
                                       uiOutput('UIgetpdf_mn'),
