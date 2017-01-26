@@ -94,6 +94,31 @@ shinyServer(function(input, output, session) {
   
   
   ####################################################
+  # Create plotdata reactive dataset
+  ####################################################
+  #   depending on the cell type chosen, defines the dataset to plot
+  
+  plotdata <- reactive({
+    
+    if(input$Yaxis == 'Cell Number'){
+
+      vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
+
+      # Calculate number of different cells in each stack:
+      filt.N.cells.stack <- countcells(data = data, vars1)
+      
+      x <- cbind(Type = 'Cell Number', filt.N.cells.stack)
+      names(x)[names(x) == 'N'] <- 'Value'
+      
+      return(x)
+      
+    } else x <- data
+    
+    return(x)
+  })
+  
+  
+  ####################################################
   # Create vipdata reactive table
   ####################################################
   #   add 'Viewpoints' to the raw data
@@ -103,14 +128,14 @@ shinyServer(function(input, output, session) {
   vipdata <- reactive({
     
     if(input$usevp == 'yes'){
-      x <- viewpoint(data,
+      x <- viewpoint(plotdata(),
                      name_vp1 = input$vp1_name, vp1 = input$viewpoint1,
                      name_vp2 = input$vp2_name, vp2 = input$viewpoint2,
                      name_vp3 = input$vp3_name, vp3 = input$viewpoint3)
       
     } else if(input$usevp == 'no'){
       
-      x <- viewpoint(data, name_vp1 = '', vp1 = input$Label,
+      x <- viewpoint(plotdata(), name_vp1 = '', vp1 = input$Label,
                      name_vp2 = NULL, name_vp3 = NULL)
     }
     
@@ -123,45 +148,6 @@ shinyServer(function(input, output, session) {
   })
   
   
-  ####################################################
-  # Create plotdata reactive dataset
-  ####################################################
-  #   depending on the cell type chosen, defines the dataset to plot
-  
-  plotdata <- reactive({
-    
-    if(input$Yaxis == 'Cell Number'){
-      
-       ####TESTING
-       # previous -> vars1 <- c("Stack", "Genotype", "Stage", "Labels")
-       vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
-       
-      # vars2 <- c("Genotype", "Stage", "Labels")
-      
-      if(input$usevp == 'yes') {
-        vars1[vars1 == 'Labels'] <- "Viewpoints"
-       # vars2[vars2 == 'Labels'] <- "Viewpoints"
-      }
-      
-      # Calculate number of different cells in each stack:
-      filt.N.cells.stack <- countcells(data = vipdata(), vars1)
-      
-      x <- cbind(Type = 'Cell Number', filt.N.cells.stack)
-      
-      
-      # # Combine with means for other traits
-      # summary <- groupmeans(data = vipdata(),
-      #                       vars2 = vars2,
-      #                       filt.N.cells.stack)
-      
-      names(x)[names(x) == 'N'] <- 'Value'
-      
-      return(x)
-      
-    } else x <- vipdata()
-    
-    return(x)
-  })
   
   
   #############################################
@@ -218,7 +204,7 @@ shinyServer(function(input, output, session) {
   # subset of plot_data() values that are plotted
   # keep it separate so that color map is not changed when subsetting plots
   sub_plotdata <- reactive({
-    x <- subset(plotdata(),
+    x <- subset(vipdata(),
                 Genotype %in% input$Genotype &
                   Stage %in% input$Stage &
                   Type == input$Yaxis)
@@ -239,7 +225,7 @@ shinyServer(function(input, output, session) {
       
     } else{
       
-      x <- col.map(data = plotdata(),
+      x <- col.map(data = vipdata(),
                    colorize = input$colorize,
                    brew = input$brewery)
     }
