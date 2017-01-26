@@ -83,7 +83,7 @@ viewpoint <- function(data = data,
                       name_vp1, vp1 = NULL,
                       name_vp2, vp2 = NULL,
                       name_vp3, vp3 = NULL
-                      ){
+){
   data$Viewpoints <- NA
   data[data$Labels %in% vp1, 'Viewpoints'] <- name_vp1
   data[data$Labels %in% vp2, 'Viewpoints'] <- name_vp2

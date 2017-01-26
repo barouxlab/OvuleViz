@@ -59,7 +59,7 @@ shinyUI(
                  
                  selectInput("Yaxis",
                              label = "Variable:",
-                             choices = levels(data$Type)),
+                             choices = c(levels(data$Type), 'Cell Number')),
                 
                  radioButtons('group',
                               label = 'Split plots on:',

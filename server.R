@@ -49,7 +49,6 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  
   # do not allow overlap between viewpoint selections (would lead to probs with ggplot facet wraping):
   observe({
     
@@ -129,27 +128,33 @@ shinyServer(function(input, output, session) {
   ####################################################
   # Create plotdata reactive dataset
   ####################################################
-  #   depending on the currently open tab, defines the dataset to plot
-  #   -- either vipdata() or the group summaries
+  #   depending on the cell type chosen, defines the dataset to plot
   
   plotdata <- reactive({
-    if(input$tabs1 == 'averages'){
-      
-      vars1 <- c("Stack", "Genotype", "Stage", "Labels")
-      vars2 <- c("Genotype", "Stage", "Labels")
+    
+    if(input$Yaxis == 'Cell Number'){
+      # 
+       vars1 <- c("Stack", "Genotype", "Stage", "Labels")
+      # vars2 <- c("Genotype", "Stage", "Labels")
       
       if(input$usevp == 'yes') {
         vars1[vars1 == 'Labels'] <- "Viewpoints"
-        vars2[vars2 == 'Labels'] <- "Viewpoints"
+       # vars2[vars2 == 'Labels'] <- "Viewpoints"
       }
       
       # Calculate number of different cells in each stack:
       filt.N.cells.stack <- countcells(data = vipdata(), vars1)
       
-      # Combine with means for other traits
-      summary <- groupmeans(data = vipdata(),
-                            vars2 = vars2,
-                            filt.N.cells.stack)
+      summary <- cbind(Type = 'Cell Number', filt.N.cells.stack)
+      
+      
+      # # Combine with means for other traits
+      # summary <- groupmeans(data = vipdata(),
+      #                       vars2 = vars2,
+      #                       filt.N.cells.stack)
+      
+      names(summary)[names(summary) == 'N'] <- 'Value'
+      
       return(summary)
       
     } else x <- vipdata()
@@ -193,11 +198,11 @@ shinyServer(function(input, output, session) {
     
     # Update Yaxis selector (e.g. to reflect presence of 'Cell number' in 'averages' tab),
     # while keeping the previous choice selected:
-    prevVal <- input$Yaxis
-    
-    updateSelectInput(session, inputId = "Yaxis",
-                      choices = levels(plotdata()$Type),
-                      selected = prevVal)
+    # prevVal <- input$Yaxis
+    # 
+    # updateSelectInput(session, inputId = "Yaxis",
+    #                   choices = levels(plotdata()$Type),
+    #                   selected = prevVal)
   })
   
   
@@ -433,7 +438,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    Sys.time()
+    names(plotdata())
   })
   
 })
