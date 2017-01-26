@@ -177,4 +177,3 @@ N.cells.stack <- countcells(data, c("Stack", "Genotype", "Stage", "Labels"))
 group.summary <- groupmeans(data = data,
                             vars2 = c("Genotype", "Stage", "Labels"),
                             N.cells.stack)
-

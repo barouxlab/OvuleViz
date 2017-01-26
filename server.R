@@ -6,15 +6,15 @@ shinyServer(function(input, output, session) {
   output$views <- renderUI({
     
     if(input$usevp == 'no'){
-      
+
       tagList(
         selectizeInput('Label',
                        label = 'Select cell types',
                        choices = levels(data$Labels), multiple = TRUE,
                        selected = 'L1 apical'),
-        
+
         actionButton('Label_goButton', 'select all', style = actbut_style, width = '60%'))
-      
+
     } else{
       tagList(
         
@@ -114,8 +114,6 @@ shinyServer(function(input, output, session) {
                      name_vp2 = NULL, name_vp3 = NULL)
     }
     
-    
-    
     # subset based on SMC neighbour tag
     if(input$SMCneighb){
       x <- x[x$neighbourSMC == 'SMC contact',]
@@ -133,8 +131,11 @@ shinyServer(function(input, output, session) {
   plotdata <- reactive({
     
     if(input$Yaxis == 'Cell Number'){
-      # 
-       vars1 <- c("Stack", "Genotype", "Stage", "Labels")
+      
+       ####TESTING
+       # previous -> vars1 <- c("Stack", "Genotype", "Stage", "Labels")
+       vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
+       
       # vars2 <- c("Genotype", "Stage", "Labels")
       
       if(input$usevp == 'yes') {
@@ -145,7 +146,7 @@ shinyServer(function(input, output, session) {
       # Calculate number of different cells in each stack:
       filt.N.cells.stack <- countcells(data = vipdata(), vars1)
       
-      summary <- cbind(Type = 'Cell Number', filt.N.cells.stack)
+      x <- cbind(Type = 'Cell Number', filt.N.cells.stack)
       
       
       # # Combine with means for other traits
@@ -153,11 +154,12 @@ shinyServer(function(input, output, session) {
       #                       vars2 = vars2,
       #                       filt.N.cells.stack)
       
-      names(summary)[names(summary) == 'N'] <- 'Value'
+      names(x)[names(x) == 'N'] <- 'Value'
       
-      return(summary)
+      return(x)
       
     } else x <- vipdata()
+    
     return(x)
   })
   
@@ -165,47 +167,51 @@ shinyServer(function(input, output, session) {
   #############################################
   # update group and colorize choices depending on type of plot
   #############################################
-  
-  observeEvent(plotdata(), {
-    
+
+  observe({
+    #previously: observeEvent(plotdata(), { was not working
+
     prevVal <- c(input$group, input$colorize)
-    
+
     if(input$usevp == 'no') {
       prevVal[prevVal == 'Viewpoints'] <- 'Labels'
       ch <- GLSN
-      
+
       if(input$tabs1 %in% c('averages')){
         prevVal[prevVal == 'neighbourSMC'] <- 'Labels'
         ch <- GLS}}
-    
-    
+
+
     if(input$usevp == 'yes') {
       ch <- GLVSN
-      
-      if(input$tabs1 %in% c('averages')){
+
+      #if(input$tabs1 %in% c('averages')){
+      if(input$Yaxis == 'Cell Number'){
+
         prevVal[prevVal == 'Labels'] <- 'Viewpoints'
         prevVal[prevVal == 'neighbourSMC'] <- 'Viewpoints'
-        ch <- GVS}}
-    
-    
+        ch <- GVS}
+      }
+
+
     updateRadioButtons(session, inputId = 'group',
                        choices = ch,
                        select = prevVal[1])
-    
+
     updateRadioButtons(session, inputId = 'colorize',
                        choices = ch,
                        select = prevVal[2])
-    
+
     # Update Yaxis selector (e.g. to reflect presence of 'Cell number' in 'averages' tab),
     # while keeping the previous choice selected:
     # prevVal <- input$Yaxis
-    # 
+    #
     # updateSelectInput(session, inputId = "Yaxis",
     #                   choices = levels(plotdata()$Type),
     #                   selected = prevVal)
   })
-  
-  
+
+
   ####################################################
   # Create sub_plotdata reactive dataset
   ####################################################
@@ -438,7 +444,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    names(plotdata())
+    head(plotdata())
   })
   
 })

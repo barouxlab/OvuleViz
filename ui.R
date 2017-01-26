@@ -6,7 +6,7 @@ shinyUI(
       "Plots",
       fluidPage(
         fluidRow(
-          textOutput('debug'),
+          verbatimTextOutput('debug'),
           column(2,
                  
                  #######################
