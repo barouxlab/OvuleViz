@@ -1,5 +1,5 @@
 
-  p <- ggplot(data = sub_plotdata(), aes_string('Stage', 'Value', fill = input$colorize)) +
+  p <- ggplot(data = gg_data(), aes_string('Stage', 'Value', fill = input$colorize)) +
     scale_fill_manual(values = colormap(), name = NULL)
   
   if(input$group == 'Stage'){

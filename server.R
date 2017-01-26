@@ -69,6 +69,11 @@ shinyServer(function(input, output, session) {
                          select = preval)
   })
   
+  # #### TEST
+  # observeEvent(input$Label, {
+  #  Label() <- input$Label %>% debounce(1000)
+  # })
+  
   
   #############################################
   #############################################
@@ -101,16 +106,13 @@ shinyServer(function(input, output, session) {
   plotdata <- reactive({
     
     if(input$Yaxis == 'Cell Number'){
-
-      vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
-
+      
       # Calculate number of different cells in each stack:
+      vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
       filt.N.cells.stack <- countcells(data = data, vars1)
       
       x <- cbind(Type = 'Cell Number', filt.N.cells.stack)
       names(x)[names(x) == 'N'] <- 'Value'
-      
-      return(x)
       
     } else x <- data
     
@@ -121,9 +123,10 @@ shinyServer(function(input, output, session) {
   ####################################################
   # Create vipdata reactive table
   ####################################################
-  #   add 'Viewpoints' to the raw data
-  #   the vipdata() is subsetted on Types that have a viewpoint
+  #  add 'Viewpoints'
   #   if the 'no viewpoints' option is set, then add one 'invisible' viewpoint to all the rows
+  
+  #   subset based on tags
   
   vipdata <- reactive({
     
@@ -139,7 +142,9 @@ shinyServer(function(input, output, session) {
                      name_vp2 = NULL, name_vp3 = NULL)
     }
     
-    # subset based on SMC neighbour tag
+    
+    ##### subset based on SMC neighbour tag
+    
     if(input$SMCneighb){
       x <- x[x$neighbourSMC == 'SMC contact',]
     }
@@ -148,38 +153,23 @@ shinyServer(function(input, output, session) {
   })
   
   
-  
-  
   #############################################
   # update group and colorize choices depending on type of plot
   #############################################
 
   observe({
-    #previously: observeEvent(plotdata(), { was not working
 
     prevVal <- c(input$group, input$colorize)
 
     if(input$usevp == 'no') {
       prevVal[prevVal == 'Viewpoints'] <- 'Labels'
       ch <- GLSN
-
-      if(input$tabs1 %in% c('averages')){
-        prevVal[prevVal == 'neighbourSMC'] <- 'Labels'
-        ch <- GLS}}
-
-
+    }
+    
     if(input$usevp == 'yes') {
       ch <- GLVSN
-
-      #if(input$tabs1 %in% c('averages')){
-      if(input$Yaxis == 'Cell Number'){
-
-        prevVal[prevVal == 'Labels'] <- 'Viewpoints'
-        prevVal[prevVal == 'neighbourSMC'] <- 'Viewpoints'
-        ch <- GVS}
-      }
-
-
+    }
+    
     updateRadioButtons(session, inputId = 'group',
                        choices = ch,
                        select = prevVal[1])
@@ -187,23 +177,15 @@ shinyServer(function(input, output, session) {
     updateRadioButtons(session, inputId = 'colorize',
                        choices = ch,
                        select = prevVal[2])
-
-    # Update Yaxis selector (e.g. to reflect presence of 'Cell number' in 'averages' tab),
-    # while keeping the previous choice selected:
-    # prevVal <- input$Yaxis
-    #
-    # updateSelectInput(session, inputId = "Yaxis",
-    #                   choices = levels(plotdata()$Type),
-    #                   selected = prevVal)
   })
 
 
   ####################################################
-  # Create sub_plotdata reactive dataset
+  # Create gg_data reactive dataset
   ####################################################
-  # subset of plot_data() values that are plotted
+  # subset of vip_data() values that are plotted
   # keep it separate so that color map is not changed when subsetting plots
-  sub_plotdata <- reactive({
+  gg_data <- reactive({
     x <- subset(vipdata(),
                 Genotype %in% input$Genotype &
                   Stage %in% input$Stage &
@@ -220,7 +202,6 @@ shinyServer(function(input, output, session) {
   colormap <- reactive({
     
     if(input$customcol & input$colorize == 'Labels'){
-      
       x <- customcolmap
       
     } else{
@@ -327,11 +308,11 @@ shinyServer(function(input, output, session) {
   
   # #Not run - retrieve table with values selected on plotly
   # #would need to add key = key to aes  dodge.width = 0
-  # key <- rownames(sub_plotdata())
+  # key <- rownames(gg_data())
   # output$selectTable <-  renderDataTable({
   #   d <- NULL
   #   d <- event_data("plotly_selected", source = 'A')$key
-  #   if(!is.null(d)) selected <- sub_plotdata()[d,]
+  #   if(!is.null(d)) selected <- gg_data()[d,]
   # })
   
   #############################################
@@ -346,7 +327,7 @@ shinyServer(function(input, output, session) {
         # Bug? Have to call colormap() here because it was not active inside ggplot function!
         colormap()
         
-        p <- ggplot(data = sub_plotdata(), aes_string('Value', fill = input$colorize)) +
+        p <- ggplot(data = gg_data(), aes_string('Value', fill = input$colorize)) +
           facet_wrap(input$group, ncol = input$ncols) +
           scale_fill_manual(values = colormap(), name = NULL)
         
@@ -372,36 +353,36 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  observe({
-    
-    if(input$tabs1 == 'averages'){
-      
-      pl_mn <- reactive({
-        # Bug? Have to call colormap() here because it was not active inside ggplot function!
-        colormap()
-        dodge <- position_dodge(width=0.3)
-        
-        p <- ggplot(data = sub_plotdata(), aes_string('Stage', y = 'mean',
-                                                      color = input$colorize,
-                                                      group = input$colorize,
-                                                      fill = input$colorize)) +
-          facet_wrap(input$group, ncol = input$ncols) +
-          geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
-                        position = dodge, width = 0.2, color = 'grey') +
-          geom_line(position = dodge) +
-          geom_point(size = rel(4), pch = 21, color = 'black', position = dodge) +
-          scale_color_manual(values = colormap(), name = NULL) +
-          scale_fill_manual(values = colormap(), name = NULL)
-        
-        p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
-        return(p)
-      })
-      
-      output$plotMeans <- renderPlot(pl_mn(), height = plheight)
-      output$getpdf_mn <- handle(plot = pl_mn(), width = input$getpdf_mn_width,height = input$getpdf_mn_height)
-      output$UIgetpdf_mn <- renderUI(tagModal(x = 'getpdf_mn'))
-    }
-  })
+  # observe({
+  #   
+  #   if(input$tabs1 == 'averages'){
+  #     
+  #     pl_mn <- reactive({
+  #       # Bug? Have to call colormap() here because it was not active inside ggplot function!
+  #       colormap()
+  #       dodge <- position_dodge(width=0.3)
+  #       
+  #       p <- ggplot(data = gg_data(), aes_string('Stage', y = 'mean',
+  #                                                     color = input$colorize,
+  #                                                     group = input$colorize,
+  #                                                     fill = input$colorize)) +
+  #         facet_wrap(input$group, ncol = input$ncols) +
+  #         geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
+  #                       position = dodge, width = 0.2, color = 'grey') +
+  #         geom_line(position = dodge) +
+  #         geom_point(size = rel(4), pch = 21, color = 'black', position = dodge) +
+  #         scale_color_manual(values = colormap(), name = NULL) +
+  #         scale_fill_manual(values = colormap(), name = NULL)
+  #       
+  #       p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
+  #       return(p)
+  #     })
+  #     
+  #     output$plotMeans <- renderPlot(pl_mn(), height = plheight)
+  #     output$getpdf_mn <- handle(plot = pl_mn(), width = input$getpdf_mn_width,height = input$getpdf_mn_height)
+  #     output$UIgetpdf_mn <- renderUI(tagModal(x = 'getpdf_mn'))
+  #   }
+  # })
   
   #############################################
   #############################################
@@ -430,7 +411,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    head(plotdata())
+    input$SMCneighb
   })
   
 })

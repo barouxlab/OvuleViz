@@ -142,11 +142,7 @@ handle <- function(plot, width, height){
 ##############################################################
 
 GLSN <- c('Genotype', 'Labels', 'Stage', 'neighbourSMC')
-GLS <- c('Genotype', 'Labels', 'Stage')
 GLVSN <- c('Genotype', 'Labels', 'Viewpoints', 'Stage', 'neighbourSMC')
-GLVS <- c('Genotype', 'Labels', 'Viewpoints', 'Stage')
-GVS <- c('Genotype', 'Viewpoints', 'Stage')
-
 
 ##############################################################
 # style

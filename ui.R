@@ -130,21 +130,23 @@ shinyUI(
                              tabPanel('averages',
                                       helpText('Error bars represent standard deviation.'),
                                       uiOutput('UIgetpdf_mn'),
-                                      plotOutput('plotMeans')),
-                             tabPanel('cell number'))
+                                      plotOutput('plotMeans'))
+                             )
           )
         ))),
     tabPanel("Tables",
              fluidPage(
                
                tabsetPanel(id = 'tabs2',
-                           tabPanel('Means + StDev',
-                                    dataTableOutput('group_summary'),
-                                    helpText('Download full table as a .CSV file'),
-                                    downloadButton('downloadMeansSD', 'Download')),
+                           tabPanel('Original data', dataTableOutput("table")),
                            tabPanel('Cells per stack', dataTableOutput('cell_numb_stack'),
                                     helpText('Download full table as a .CSV file'),
                                     downloadButton('downloadCellsStack', 'Download')),
-                           tabPanel('Original data', dataTableOutput("table"))
+                           tabPanel('Means + StDev',
+                                    dataTableOutput('group_summary'),
+                                    helpText('Download full table as a .CSV file'),
+                                    downloadButton('downloadMeansSD', 'Download'))
+
+                           
                )))
   ))
