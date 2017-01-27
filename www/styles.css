@@ -1,6 +1,6 @@
 
 .shiny-output-error{
-  visibility: hidden; /* use visible or hidden */
+  visibility: visible; /* use visible or hidden */
 }
 
 /* is this needed as well?
@@ -45,3 +45,16 @@
   background: #efefef;
   padding: 1px 2px;
 }
+
+/* NOT WORKING, but using .model changes ALL modals
+
+.graphOpts {
+  position: fixed;
+  left: 60%;
+  top: 20%;
+  z-index: 10040;
+  overflow: auto;
+  overflow-y: auto;
+}
+
+*/
