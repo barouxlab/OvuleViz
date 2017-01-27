@@ -10,15 +10,14 @@ shinyUI(
         fluidRow(
           
           verbatimTextOutput('debug'),
-          column(4,
-                 
+          column(3,
                  fluidRow(
                    h3("Arrangement"),
                    
                    column(6,
                           radioButtons('group',
                                        label = 'Split plots on:',
-                                       choices = GLSN,
+                                       choices = c(GLSNS),
                                        selected = 'Labels')),
                    column(6,
                           
@@ -31,16 +30,24 @@ shinyUI(
                  
                  fluidRow(
                    
-                   actionButton('graphOptsBut', 'Graph Options'),
+                   tags$hr(),
+                   
+                   h3("Graph options"),
+                   
+                   fluidRow(
+                     
+                     column(6,
+                            sliderInput('plheight', label = 'Plot height', ticks = FALSE,
+                                        min = 200, max = 2000, value = 600, step = 200, width = '80%')),
+                     column(6,
+                            sliderInput('ncols', label = 'Plots per row', ticks = FALSE,
+                                        min = 1, max = 12, value = 3, step = 1, width = '80%'))
+                   ),
+                   
+                   actionButton('graphOptsBut', 'More options'),
                    
                    bsModal('graphOpts', 'Graph options', 'graphOptsBut',
                            size = 'small',
-                           
-                           sliderInput('plheight', label = 'Plot height', ticks = FALSE,
-                                       min = 200, max = 2000, value = 600, step = 200, width = '60%'),
-                           
-                           sliderInput('ncols', label = 'Plots per row', ticks = FALSE,
-                                       min = 1, max = 6, value = 2, step = 1, width = '60%'),
                            
                            checkboxInput('logY', label = 'log y-axis',
                                          value = FALSE),
@@ -69,7 +76,7 @@ shinyUI(
                                                 min = 2, max = 100, value = 40,
                                                 step = 2, width = '60%')),
                    
-
+                   
                    conditionalPanel("input.tabs1 == 'scatter'",
                                     class = 'panel_style',
                                     h3('Scatterplot options'),
@@ -123,11 +130,11 @@ shinyUI(
                                         label = 'only SMC neighbour cells',
                                         value = FALSE)
                    )
-                                    )
+                 )
                  
           ),
           
-          column(8,
+          column(9,
                  tabsetPanel(id = 'tabs1',
                              tabPanel('boxplot',
                                       uiOutput('UIgetpdf_bx'),

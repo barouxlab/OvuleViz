@@ -163,19 +163,21 @@ shinyServer(function(input, output, session) {
 
     if(input$usevp == 'no') {
       prevVal[prevVal == 'Viewpoints'] <- 'Labels'
-      ch <- GLSN
+      ch_Group <- GLSNS
+      ch_Color <- GLSN
     }
     
     if(input$usevp == 'yes') {
-      ch <- GLVSN
+      ch_Group <- GLVSNS
+      ch_Color <- GLVSN
     }
     
     updateRadioButtons(session, inputId = 'group',
-                       choices = ch,
+                       choices = ch_Group,
                        select = prevVal[1])
 
     updateRadioButtons(session, inputId = 'colorize',
-                       choices = ch,
+                       choices = ch_Color,
                        select = prevVal[2])
   })
 
