@@ -1,3 +1,16 @@
+
+.shiny-output-error{
+  visibility: hidden; /* use visible or hidden */
+}
+
+/* is this needed as well?
+
+.shiny-output-error:before{
+  visibility: hidden;
+}
+*/
+
+
 .actbut_style{
   text-shadow: none;
   background: none;
