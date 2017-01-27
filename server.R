@@ -396,19 +396,6 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  observe({
-    
-    if(input$tabs1 == 'table'){
-      output$gg_data_table <- renderDataTable(gg_data())
-      
-      temp <- vipdata()
-      save(temp, file = 'temp_vip.Rdata')
-    }
-  })
-  
-  #############################################
-  #############################################
-  
   output$group_summary <- renderDataTable(group.summary)
   
   output$downloadMeansSD <- downloadHandler(
