@@ -27,7 +27,7 @@ shinyUI(
                                     selected = levels(data$Stage)),
                  
                  actionButton('Stage_goButton', 'select all',
-                              style = actbut_style, width = '60%'),
+                              class = 'actbut_style', width = '60%'),
                  
                  tags$hr(),
                  
@@ -72,7 +72,7 @@ shinyUI(
                               choices = GLSN,
                               selected = 'Genotype'),
                  
-                 conditionalPanel("input.tabs1 == 'histogram'", style = panel_style,
+                 conditionalPanel("input.tabs1 == 'histogram'", class = 'panel_style',
                                   h3('Histogram options'),
                                   radioButtons('density', label = 'Y-axis:',
                                                choices = c('counts', 'density'),
@@ -86,7 +86,7 @@ shinyUI(
                  h3("Graphic options"),
                  
                  conditionalPanel("input.tabs1 == 'scatter'",
-                                  style = panel_style,
+                                  class = 'panel_style',
                                   checkboxInput('interact', label = 'Interactive plot (slower)',
                                                 value = FALSE)),
                  
@@ -132,8 +132,8 @@ shinyUI(
                                       helpText('Error bars represent standard deviation.'),
                                       uiOutput('UIgetpdf_mn'),
                                       actionButton('MeanTabButton', label = 'Table with values',
-                                                   style = actbut_style),
-                                      downloadButton('downloadTableMeans', 'Download', class = "download_but"),
+                                                   class = 'actbut_style'),
+                                      downloadButton('downloadTableMeans', 'Download as .csv', class = "actbut_style"),
                                       bsModal('tabMeansMod', 'Mean ± SD', 'MeanTabButton',
                                               #tableOutput('tableMeans')),
                                               dataTableOutput('tableMeans')),

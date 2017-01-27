@@ -13,7 +13,7 @@ shinyServer(function(input, output, session) {
                        choices = levels(data$Labels), multiple = TRUE,
                        selected = 'L1 apical'),
 
-        actionButton('Label_goButton', 'select all', style = actbut_style, width = '60%'))
+        actionButton('Label_goButton', 'select all', class = 'actbut_style', width = '60%'))
 
     } else{
       tagList(
@@ -391,8 +391,6 @@ shinyServer(function(input, output, session) {
       output$downloadTableMeans <- downloadHandler(
         filename = 'means.csv',
         content = function(file) {write.csv2(av_data(), file, quote = FALSE, row.names = FALSE)})
-
-
       
       
       #####

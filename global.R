@@ -122,7 +122,7 @@ tagModal <- function(x){
             downloadButton(x, "Download")),
     
     actionButton(paste0(x, "_Button"), "export PDF", icon = icon("download", lib = "glyphicon"),
-                 style = downbut_style)
+                 class = 'actbut_style')
   )
 }
 
@@ -157,11 +157,6 @@ ggoptions <- function(p, title, sclLog, tgr){
   if(tgr){p <- p + theme_grey(18)}
   return(p)
 }
-
-# action button style #d2d8db #5b5b5b
-actbut_style <-  ("text-shadow: none; background: #efefef; border-color: white; color: #72a0d3; padding: 2px")
-downbut_style <-  ("text-shadow: none; background: #ffffff; border-color: white; color: #c2c2c2")
-panel_style <-  ("text-shadow: none; background: #efefef; padding: 1px 2px")
 
 ##############################################################
 # calculate number of cells per ovule + means other traits

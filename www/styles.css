@@ -1,8 +1,19 @@
-
-
-.download_but{
+.actbut_style{
   text-shadow: none;
-  background: #ffffff;
+  background: none;
   border-color: white;
-  color: #c2c2c2
+  color: grey;
+  padding: 2px;
+}
+
+.actbut_style:hover{
+  background: #efefef;
+  border-color: white;
+  color: black;
+}
+
+.panel_style {
+  text-shadow: none;
+  background: #efefef;
+  padding: 1px 2px;
 }
