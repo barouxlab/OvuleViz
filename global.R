@@ -129,10 +129,10 @@ tagModal <- function(x){
   tagList(
     bsModal(x, "Export current plot as a pdf",
             trigger = paste0(x, "_Button"), size = "small",
-            numericInput(paste0(x, '_height'), label = 'Plot height',
-                         value = 7,  min = 1, max = 50, step = 0.1),
-            numericInput(paste0(x, '_width'), label = 'Plot width',
-                         value = 7,  min = 1, max = 50, step = 0.1),
+            numericInput(paste0(x, '_height'), label = 'Plot height (cm)',
+                         value = 15,  min = 1, max = 50, step = 0.1),
+            numericInput(paste0(x, '_width'), label = 'Plot width (cm)',
+                         value = 25,  min = 1, max = 50, step = 0.1),
             downloadButton(x, "Download")),
     
     actionButton(paste0(x, "_Button"), "Export PDF",
@@ -145,7 +145,7 @@ handle <- function(plot, width, height){
   downloadHandler(
     filename = 'plot.pdf',
     content = function(file) {ggsave(file, plot = plot,
-                                     device = 'pdf',
+                                     device = 'pdf', units = "cm",
                                      width = width,
                                      height = height
     )})

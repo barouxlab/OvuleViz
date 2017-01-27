@@ -82,8 +82,8 @@ shinyUI(
                                     h3('Scatterplot options'),
                                     checkboxInput('interact', label = 'Interactive plot (slower)',
                                                   value = FALSE))
-                   
                  ),
+                 
                  fluidRow(
                    
                    h3("Data selection"),
@@ -129,9 +129,7 @@ shinyUI(
                           checkboxInput('SMCneighb',
                                         label = 'only SMC neighbour cells',
                                         value = FALSE)
-                   )
-                 )
-                 
+                   ))
           ),
           
           column(9,
@@ -181,7 +179,6 @@ shinyUI(
                                     dataTableOutput('group_summary'),
                                     helpText('Download full table as a .CSV file'),
                                     downloadButton('downloadMeansSD', 'Download'))
-                           
-                           
+          
                )))
   ))

@@ -248,7 +248,6 @@ shinyServer(function(input, output, session) {
   observe({
     
     if(input$tabs1 == 'boxplot'){
-      
       pl_bx <- reactive({
         # Bug? Have to call colormap() here because it was not active inside ggplot function!
         colormap()
