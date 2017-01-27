@@ -391,11 +391,7 @@ shinyServer(function(input, output, session) {
       output$downloadTableMeans <- downloadHandler(
         filename = 'means.csv',
         content = function(file) {write.csv2(av_data(), file, quote = FALSE, row.names = FALSE)})
-      
-      
-      #####
-      
-      
+
       #output$tableMeans <- renderTable(av_data())
       output$tableMeans <- renderDataTable(av_data())
       output$downloadTableMeans <- downloadHandler(

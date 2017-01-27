@@ -12,6 +12,21 @@
   color: black;
 }
 
+.downloadBut_style{
+  text-shadow: none;
+  background: none;
+  border-color: white;
+  color: grey;
+  float: right;
+  padding: 2px;
+}
+
+.downloadBut_style:hover{
+  background: #efefef;
+  border-color: white;
+  color: black;
+}
+
 .panel_style {
   text-shadow: none;
   background: #efefef;

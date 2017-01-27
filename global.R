@@ -121,8 +121,8 @@ tagModal <- function(x){
                          value = 7,  min = 1, max = 50, step = 0.1),
             downloadButton(x, "Download")),
     
-    actionButton(paste0(x, "_Button"), "export PDF", icon = icon("download", lib = "glyphicon"),
-                 class = 'actbut_style')
+    actionButton(paste0(x, "_Button"), "Export PDF",
+                 class = 'downloadBut_style')
   )
 }
 
