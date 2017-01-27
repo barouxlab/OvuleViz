@@ -26,6 +26,18 @@ temp <- read.csv('customColorMap.csv', header = FALSE)
 customcolmap <- as.character(temp[,2])
 names(customcolmap) <- temp[,1]
 
+#############################################################
+# set initial graph option values
+##############################################################
+
+# input <- reactiveValues()
+# 
+# input$plheight <- 600
+# input$ncols <- 3
+# input$gtheme <- FALSE
+# input$logY <- FALSE
+# input$customcol <- TRUE
+# input$brewery <- 'Accent'
 
 #############################################################
 # functions

@@ -13,12 +13,9 @@ shinyUI(
           column(4,
                  
                  fluidRow(
-                   h3("Grouping"),
+                   h3("Arrangement"),
                    
                    column(6,
-                          
-                          #####################
-                          
                           radioButtons('group',
                                        label = 'Split plots on:',
                                        choices = GLSN,
@@ -56,7 +53,8 @@ shinyUI(
                            
                            helpText("Color scheme (http://colorbrewer2.org)"),
                            
-                           uiOutput('brewing'),
+                           selectizeInput('brewery', label = NULL,
+                                          choices = 'Dark2'),
                            
                            checkboxInput('customcol', label = 'Use custom color mode for cell types',
                                          value = TRUE)

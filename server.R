@@ -1,5 +1,9 @@
 shinyServer(function(input, output, session) {
   
+  #observeEvent(input$gtheme, {opts$gtheme <- input$gtheme})
+  
+  
+  
   #############################################
   #############################################
   
@@ -215,25 +219,22 @@ shinyServer(function(input, output, session) {
   
   #############################################
   #############################################
-  
-  output$brewing <- renderUI({
+
+  observe({
     
-    selectizeInput('brewery', label = NULL,
-                   choices = list(
-                     'qualitative' = rownames(subset(
-                       brewer.pal.info, category %in% 'qual' &
-                         maxcolors >= length(levels(vipdata()[, input$colorize])
-                         ))),
-                     'diverging' = rownames(subset(
-                       brewer.pal.info, category %in% 'div' &
-                         maxcolors >= length(levels(vipdata()[, input$colorize])
-                         ))),
-                     'sequential' = rownames(subset(
-                       brewer.pal.info, category %in% 'seq' &
-                         maxcolors >= length(levels(vipdata()[, input$colorize])
-                         )))))
+    precolval <- input$brewery
+    
+    updateSelectizeInput(session, 'brewery',
+                         choices = list(
+                           'qualitative' = rownames(subset(
+                             brewer.pal.info, category %in% 'qual' &
+                               maxcolors >= length(levels(vipdata()[, input$colorize])))),
+                           'sequential' = rownames(subset(
+                             brewer.pal.info, category %in% 'seq' &
+                               maxcolors >= length(levels(vipdata()[, input$colorize]))))),
+                         selected = precolval)
   })
-  
+
   #####################################
   ##########################################
   ##############################################
@@ -431,7 +432,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    vars
+    
   })
   
 })
