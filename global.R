@@ -45,7 +45,9 @@ names(customcolmap) <- temp[,1]
 
 # brewer stable color map
 col.map <- function(data = data, colorize, brew){
-  color <- brewer.pal(length(levels(data[, colorize])), brew)
+  suppressWarnings({
+    color <- brewer.pal(length(levels(data[, colorize])), brew)
+  })
   names(color) <- levels(data[, colorize])
   return(color)
 }

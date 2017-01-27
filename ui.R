@@ -31,8 +31,6 @@ shinyUI(
                  
                  fluidRow(
                    
-                   # tags$hr(),
-                   
                    actionButton('graphOptsBut', 'Graph Options'),
                    
                    bsModal('graphOpts', 'Graph options', 'graphOptsBut',
@@ -59,6 +57,9 @@ shinyUI(
                            checkboxInput('customcol', label = 'Use custom color mode for cell types',
                                          value = TRUE)
                    ),
+                   
+                   tags$hr(),
+                   
                    conditionalPanel("input.tabs1 == 'histogram'", class = 'panel_style',
                                     h3('Histogram options'),
                                     radioButtons('density', label = 'Y-axis:',
@@ -68,17 +69,15 @@ shinyUI(
                                                 min = 2, max = 100, value = 40,
                                                 step = 2, width = '60%')),
                    
-                   
-                   
+
                    conditionalPanel("input.tabs1 == 'scatter'",
                                     class = 'panel_style',
+                                    h3('Scatterplot options'),
                                     checkboxInput('interact', label = 'Interactive plot (slower)',
                                                   value = FALSE))
                    
                  ),
                  fluidRow(
-                   
-                   tags$hr(),
                    
                    h3("Data selection"),
                    

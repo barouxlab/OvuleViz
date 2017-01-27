@@ -1,9 +1,5 @@
 shinyServer(function(input, output, session) {
   
-  #observeEvent(input$gtheme, {opts$gtheme <- input$gtheme})
-  
-  
-  
   #############################################
   #############################################
   
@@ -389,11 +385,6 @@ shinyServer(function(input, output, session) {
       
       #######
       
-      output$downloadTableMeans <- downloadHandler(
-        filename = 'means.csv',
-        content = function(file) {write.csv2(av_data(), file, quote = FALSE, row.names = FALSE)})
-
-      #output$tableMeans <- renderTable(av_data())
       output$tableMeans <- renderDataTable(av_data())
       output$downloadTableMeans <- downloadHandler(
         filename = 'means.csv',
@@ -413,6 +404,11 @@ shinyServer(function(input, output, session) {
   output$downloadMeansSD <- downloadHandler(
     filename = 'summary.csv',
     content = function(file) {write.csv2(group.summary, file, quote = FALSE, row.names = FALSE)})
+  
+  #############################################
+  #############################################
+  
+  output$gg_data_table <- renderDataTable(gg_data())
   
   #############################################
   #############################################
