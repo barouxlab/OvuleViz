@@ -127,9 +127,10 @@ shinyUI(
                              tabPanel('histogram',
                                       uiOutput('UIgetpdf_h'),
                                       plotOutput('plotHist')),
-                             tabPanel('averages',
+                             tabPanel('means',
                                       helpText('Error bars represent standard deviation.'),
                                       uiOutput('UIgetpdf_mn'),
+                                      #dataTableOutput('tableMeans'),
                                       plotOutput('plotMeans')),
                              tabPanel('table',
                                       dataTableOutput('gg_data_table'))

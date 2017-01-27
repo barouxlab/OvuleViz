@@ -354,35 +354,42 @@ shinyServer(function(input, output, session) {
   #############################################
   
   observe({
-
-    if(input$tabs1 == 'averages'){
+    
+    if(input$tabs1 == 'means'){
       
-      # gg_data()
-      # pl_mn <- reactive({
-      #   # Bug? Have to call colormap() here because it was not active inside ggplot function!
-      #   colormap()
-      #   dodge <- position_dodge(width=0.3)
-      # 
-      #   p <- ggplot(data = gg_data(), aes_string('Stage', y = 'mean',
-      #                                                 color = input$colorize,
-      #                                                 group = input$colorize,
-      #                                                 fill = input$colorize)) +
-      #     facet_wrap(input$group, ncol = input$ncols) +
-      #     geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
-      #                   position = dodge, width = 0.2, color = 'grey') +
-      #     geom_line(position = dodge) +
-      #     geom_point(size = rel(4), pch = 21, color = 'black', position = dodge) +
-      #     scale_color_manual(values = colormap(), name = NULL) +
-      #     scale_fill_manual(values = colormap(), name = NULL)
-      # 
-      #   p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
-      #   return(p)
-      # })
+      vars <- c("Stage", input$colorize, input$group)
+      
+      av_data <- reactive({
+        ddply(gg_data(), vars, summarise,
+              mean = mean(Value),
+              sd   = sd(Value),
+              n = length(Value))
+      })
+      
+      pl_mn <- reactive({
 
-
-      # output$plotMeans <- renderPlot(pl_mn(), height = plheight)
-      # output$getpdf_mn <- handle(plot = pl_mn(), width = input$getpdf_mn_width,height = input$getpdf_mn_height)
-      # output$UIgetpdf_mn <- renderUI(tagModal(x = 'getpdf_mn'))
+        dodge <- position_dodge(width=0.3)
+        
+        p <- ggplot(data = av_data(), aes_string('Stage', y = 'mean',
+                                                 color = input$colorize,
+                                                 group = input$colorize,
+                                                 fill = input$colorize)) +
+          facet_wrap(input$group, ncol = input$ncols) +
+          geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
+                        position = dodge, width = 0.2, color = 'grey') +
+          geom_line(position = dodge) +
+          geom_point(size = rel(4), pch = 21, color = 'black', position = dodge) +
+          scale_color_manual(values = colormap(), name = NULL) +
+          scale_fill_manual(values = colormap(), name = NULL)
+        
+        p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
+        return(p)
+      })
+      
+      output$tableMeans <- renderDataTable(av_data())
+      output$plotMeans <- renderPlot(pl_mn(), height = plheight)
+      output$getpdf_mn <- handle(plot = pl_mn(), width = input$getpdf_mn_width,height = input$getpdf_mn_height)
+      output$UIgetpdf_mn <- renderUI(tagModal(x = 'getpdf_mn'))
     }
   })
   
@@ -393,6 +400,9 @@ shinyServer(function(input, output, session) {
     
     if(input$tabs1 == 'table'){
       output$gg_data_table <- renderDataTable(gg_data())
+      
+      temp <- vipdata()
+      save(temp, file = 'temp_vip.Rdata')
     }
   })
   
@@ -423,7 +433,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    input$SMCneighb
+    vars
   })
   
 })
