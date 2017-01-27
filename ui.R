@@ -174,11 +174,6 @@ shinyUI(
                            tabPanel('Original data', dataTableOutput("alldata")),
                            tabPanel('Cells per stack', dataTableOutput('cell_numb_stack'),
                                     helpText('Download full table as a .CSV file'),
-                                    downloadButton('downloadCellsStack', 'Download')),
-                           tabPanel('Means + StDev',
-                                    dataTableOutput('group_summary'),
-                                    helpText('Download full table as a .CSV file'),
-                                    downloadButton('downloadMeansSD', 'Download'))
-          
+                                    downloadButton('downloadCellsStack', 'Download'))
                )))
   ))

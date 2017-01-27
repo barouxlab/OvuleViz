@@ -400,15 +400,6 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  output$group_summary <- renderDataTable(group.summary)
-  
-  output$downloadMeansSD <- downloadHandler(
-    filename = 'summary.csv',
-    content = function(file) {write.csv2(group.summary, file, quote = FALSE, row.names = FALSE)})
-  
-  #############################################
-  #############################################
-  
   output$gg_data_table <- renderDataTable(gg_data())
   
   #############################################

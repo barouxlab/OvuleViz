@@ -175,12 +175,8 @@ ggoptions <- function(p, title, sclLog, tgr){
 }
 
 ##############################################################
-# calculate number of cells per ovule + means other traits
+# calculate number of cells per ovule
 ##############################################################
 
-# Calculate number of different cells in each stack:
 N.cells.stack <- countcells(data, c("Stack", "Genotype", "Stage", "Labels"))
 
-group.summary <- groupmeans(data = data,
-                            vars2 = c("Genotype", "Stage", "Labels"),
-                            N.cells.stack)
