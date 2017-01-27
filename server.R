@@ -386,7 +386,24 @@ shinyServer(function(input, output, session) {
         return(p)
       })
       
+      #######
+      
+      output$downloadTableMeans <- downloadHandler(
+        filename = 'means.csv',
+        content = function(file) {write.csv2(av_data(), file, quote = FALSE, row.names = FALSE)})
+
+
+      
+      
+      #####
+      
+      
+      #output$tableMeans <- renderTable(av_data())
       output$tableMeans <- renderDataTable(av_data())
+      output$downloadTableMeans <- downloadHandler(
+        filename = 'means.csv',
+        content = function(file) {write.csv2(av_data(), file, quote = FALSE, row.names = FALSE)})
+      
       output$plotMeans <- renderPlot(pl_mn(), height = plheight)
       output$getpdf_mn <- handle(plot = pl_mn(), width = input$getpdf_mn_width,height = input$getpdf_mn_height)
       output$UIgetpdf_mn <- renderUI(tagModal(x = 'getpdf_mn'))

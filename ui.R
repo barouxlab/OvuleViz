@@ -4,7 +4,8 @@ shinyUI(
     
     tabPanel(
       "Plots",
-      fluidPage(
+      fluidPage(includeCSS("www/styles.css"),
+                
         fluidRow(
           verbatimTextOutput('debug'),
           column(2,
@@ -132,7 +133,9 @@ shinyUI(
                                       uiOutput('UIgetpdf_mn'),
                                       actionButton('MeanTabButton', label = 'Table with values',
                                                    style = actbut_style),
+                                      downloadButton('downloadTableMeans', 'Download', class = "download_but"),
                                       bsModal('tabMeansMod', 'Mean ± SD', 'MeanTabButton',
+                                              #tableOutput('tableMeans')),
                                               dataTableOutput('tableMeans')),
                                       plotOutput('plotMeans')),
                              tabPanel('table',
