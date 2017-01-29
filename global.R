@@ -27,17 +27,19 @@ customcolmap <- as.character(temp[,2])
 names(customcolmap) <- temp[,1]
 
 #############################################################
-# set initial graph option values
+# set initial cell type values
 ##############################################################
 
-# input <- reactiveValues()
-# 
-# input$plheight <- 600
-# input$ncols <- 3
-# input$gtheme <- FALSE
-# input$logY <- FALSE
-# input$customcol <- TRUE
-# input$brewery <- 'Accent'
+cellviews <- reactiveValues()
+
+cellviews$usevp <- 'no'
+cellviews$Label <- 'L1 apical'
+#cellviews$vp1_name <- 'vp1'
+#cellviews$viewpoint1 <- c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome')
+#cellviews$vp2_name <- 'vp2'
+#cellviews$viewpoint2 <- c('L2 apical', 'L2 basal', 'L2 basal sup')
+#cellviews$vp3_name <- 'vp3'
+#cellviews$viewpoint3 <- c('SMC')
 
 #############################################################
 # functions

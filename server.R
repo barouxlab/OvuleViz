@@ -1,51 +1,52 @@
 shinyServer(function(input, output, session) {
   
-  #############################################
-  #############################################
-  
   output$views <- renderUI({
     
     if(input$usevp == 'no'){
-
+      
       tagList(
         selectizeInput('Label',
                        label = 'Select cell types',
                        choices = levels(data$Labels), multiple = TRUE,
-                       selected = 'L1 apical'),
-
-        actionButton('Label_goButton', 'select all', class = 'actbut_style', width = '60%'))
-
+                       selected = cellviews$Label),
+        
+        actionButton('Label_goButton', 'select all',
+                     class = 'actbut_style', width = '20%'))
+      
     } else{
       tagList(
-        
-        tags$strong("Viewpoint 1"),
-        textInput('vp1_name', label = NULL, value = 'vp1'),
-        helpText("Select cell types"),
-        
-        selectizeInput('viewpoint1',
-                       label = NULL, multiple = TRUE,
-                       choices = levels(data$Labels), 
-                       select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome')),
-        
-        ###
-        tags$strong("Viewpoint 2"),
-        textInput('vp2_name', label = NULL, value = 'vp2'),
-        helpText("Select cell types"),
-        
-        selectizeInput('viewpoint2',
-                       label = NULL, multiple = TRUE,
-                       choices = levels(data$Labels),
-                       select = c('L2 apical', 'L2 basal', 'L2 basal sup')),
-        
-        ###
-        tags$strong("Viewpoint 3"),
-        textInput('vp3_name', label = NULL, value = 'vp3'),
-        helpText("Select cell types"),
-        
-        selectizeInput('viewpoint3',
-                       label = NULL, multiple = TRUE,
-                       choices = levels(data$Labels))
-      )
+        fluidRow(
+          column(4,
+                 tags$strong("Viewpoint 1"),
+                 textInput('vp1_name', label = NULL, value = 'vp1'),
+                 helpText("Select cell types"),
+                 
+                 selectizeInput('viewpoint1',
+                                label = NULL, multiple = TRUE,
+                                choices = levels(data$Labels), 
+                                select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome'))
+          ),
+          column(4,
+                 tags$strong("Viewpoint 2"),
+                 textInput('vp2_name', label = NULL, value = 'vp2'),
+                 helpText("Select cell types"),
+                 
+                 selectizeInput('viewpoint2',
+                                label = NULL, multiple = TRUE,
+                                choices = levels(data$Labels),
+                                select = c('L2 apical', 'L2 basal', 'L2 basal sup'))
+          ),
+          column(4,
+                 tags$strong("Viewpoint 3"),
+                 textInput('vp3_name', label = NULL, value = 'vp3'),
+                 helpText("Select cell types"),
+                 
+                 selectizeInput('viewpoint3',
+                                label = NULL, multiple = TRUE,
+                                choices = levels(data$Labels))
+          )
+        )
+        )
     }
   })
   
@@ -69,12 +70,6 @@ shinyServer(function(input, output, session) {
                          select = preval)
   })
   
-  # #### TEST
-  # observeEvent(input$Label, {
-  #  Label() <- input$Label %>% debounce(1000)
-  # })
-  
-  
   #############################################
   #############################################
   
@@ -97,6 +92,21 @@ shinyServer(function(input, output, session) {
                                selected = sel)
   })
   
+  
+  #############################################
+  
+  observeEvent(input$submitCell_But, {
+    
+    cellviews$usevp <- input$usevp
+    cellviews$Label <- input$Label
+    cellviews$vp1_name <- input$vp1_name
+    cellviews$viewpoint1 <- input$viewpoint1
+    cellviews$vp2_name <- input$vp2_name
+    cellviews$viewpoint2 <- input$viewpoint2
+    cellviews$vp3_name <- input$vp3_name
+    cellviews$viewpoint3 <- input$viewpoint3
+
+    })
   
   ####################################################
   # Create plotdata reactive dataset
@@ -130,15 +140,15 @@ shinyServer(function(input, output, session) {
   
   vipdata <- reactive({
     
-    if(input$usevp == 'yes'){
+    if(cellviews$usevp == 'yes'){
       x <- viewpoint(plotdata(),
-                     name_vp1 = input$vp1_name, vp1 = input$viewpoint1,
-                     name_vp2 = input$vp2_name, vp2 = input$viewpoint2,
-                     name_vp3 = input$vp3_name, vp3 = input$viewpoint3)
+                     name_vp1 = cellviews$vp1_name, vp1 = cellviews$viewpoint1,
+                     name_vp2 = cellviews$vp2_name, vp2 = cellviews$viewpoint2,
+                     name_vp3 = cellviews$vp3_name, vp3 = cellviews$viewpoint3)
       
-    } else if(input$usevp == 'no'){
+    } else if(cellviews$usevp == 'no'){
       
-      x <- viewpoint(plotdata(), name_vp1 = '', vp1 = input$Label,
+      x <- viewpoint(plotdata(), name_vp1 = '', vp1 = cellviews$Label,
                      name_vp2 = NULL, name_vp3 = NULL)
     }
     
@@ -156,18 +166,18 @@ shinyServer(function(input, output, session) {
   #############################################
   # update group and colorize choices depending on type of plot
   #############################################
-
+  
   observe({
-
+    
     prevVal <- c(input$group, input$colorize)
-
-    if(input$usevp == 'no') {
+    
+    if(cellviews$usevp == 'no') {
       prevVal[prevVal == 'Viewpoints'] <- 'Labels'
       ch_Group <- GLSNS
       ch_Color <- GLSN
     }
     
-    if(input$usevp == 'yes') {
+    if(cellviews$usevp == 'yes') {
       ch_Group <- GLVSNS
       ch_Color <- GLVSN
     }
@@ -175,13 +185,13 @@ shinyServer(function(input, output, session) {
     updateRadioButtons(session, inputId = 'group',
                        choices = ch_Group,
                        select = prevVal[1])
-
+    
     updateRadioButtons(session, inputId = 'colorize',
                        choices = ch_Color,
                        select = prevVal[2])
   })
-
-
+  
+  
   ####################################################
   # Create gg_data reactive dataset
   ####################################################
@@ -217,7 +227,7 @@ shinyServer(function(input, output, session) {
   
   #############################################
   #############################################
-
+  
   observe({
     
     precolval <- input$brewery
@@ -232,7 +242,7 @@ shinyServer(function(input, output, session) {
                                maxcolors >= length(levels(vipdata()[, input$colorize]))))),
                          selected = precolval)
   })
-
+  
   #####################################
   ##########################################
   ##############################################
@@ -365,7 +375,7 @@ shinyServer(function(input, output, session) {
       })
       
       pl_mn <- reactive({
-
+        
         dodge <- position_dodge(width=0.3)
         
         p <- ggplot(data = av_data(), aes_string('Stage', y = 'mean',
@@ -420,7 +430,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    
+    cellviews$Label
   })
   
 })

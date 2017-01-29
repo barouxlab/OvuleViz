@@ -14,6 +14,10 @@ shinyUI(
                  fluidRow(
                    h3("Arrangement"),
                    
+                   selectInput("Yaxis",
+                               label = "Y-axis:",
+                               choices = c(levels(data$Type), 'Cell Number')),
+                   
                    column(6,
                           radioButtons('group',
                                        label = 'Split plots on:',
@@ -88,31 +92,37 @@ shinyUI(
                    
                    h3("Data selection"),
                    
-                   column(6,
-                          
-                          radioButtons('usevp',
-                                       label = 'Viewpoints',
-                                       choices = c('yes', 'no'),
-                                       selected = 'no'),
-                          
-                          uiOutput('views')
-                   ),
+                   actionButton('setCellsBut', 'Set cell types'),
+                   
+                   bsModal('setCells_mod', 'Set cell types', 'setCellsBut',
+                           size = 'large',
+                           
+                           radioButtons('usevp',
+                                        label = 'Use viewpoints?',
+                                        choices = c('yes', 'no'),
+                                        selected = 'no'),
+                           
+                           uiOutput('views'),
+                           
+                           actionButton('submitCell_But', "Apply changes"))),
+                 
+                 fluidRow(
+                   
+                   tags$hr(),
                    
                    column(6,
-                          
-                          #######################
-                          
-                          selectInput("Yaxis",
-                                      label = "Variable:",
-                                      choices = c(levels(data$Type), 'Cell Number')),
                           
                           checkboxGroupInput('Genotype',
                                              label = 'Genotypes',
                                              choices = levels(data$Genotype),
                                              selected = levels(data$Genotype)),
                           
-                          tags$hr(),
+                          strong('Tags'),
                           
+                          checkboxInput('SMCneighb',
+                                        label = 'only SMC neighbour cells',
+                                        value = FALSE)),
+                   column(6,
                           
                           checkboxGroupInput('Stage',
                                              label = 'Stages',
@@ -120,16 +130,8 @@ shinyUI(
                                              selected = levels(data$Stage)),
                           
                           actionButton('Stage_goButton', 'select all',
-                                       class = 'actbut_style', width = '60%'),
-                          
-                          tags$hr(),
-                          
-                          h4('Tag filtering'),
-                          
-                          checkboxInput('SMCneighb',
-                                        label = 'only SMC neighbour cells',
-                                        value = FALSE)
-                   ))
+                                       class = 'actbut_style', width = '60%'))
+                 )
           ),
           
           column(9,
@@ -152,15 +154,14 @@ shinyUI(
                              tabPanel('means',
                                       helpText('Error bars represent standard deviation.'),
                                       fluidRow(
-                                        actionButton('MeanTabButton', label = 'View table',
+                                        actionButton('MeanTabButton', label = 'View as table',
                                                      class = 'downloadBut_style')),
-                                      fluidRow(
-                                        downloadButton('downloadTableMeans', 'Download as .csv',
-                                                       class = "downloadBut_style")),
+                                      
                                       fluidRow(uiOutput('UIgetpdf_mn')),
                                       bsModal('tabMeansMod', 'Mean ± SD', 'MeanTabButton',
-                                              #tableOutput('tableMeans')),
-                                              dataTableOutput('tableMeans')),
+                                              dataTableOutput('tableMeans'),
+                                              helpText('Download as a .CSV file'),
+                                              downloadButton('downloadTableMeans', 'Download')),
                                       plotOutput('plotMeans')),
                              tabPanel('table',
                                       dataTableOutput('gg_data_table'))
