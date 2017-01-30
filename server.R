@@ -4,15 +4,47 @@ shinyServer(function(input, output, session) {
   # Import segmented data
   ####################################################
   
-  if(!uploaded){
-    toggleModal(session, 'fileInp_mod', toggle = 'open')
-    uploaded <- TRUE
-  }
-  
-  test <- reactive({
-    read.csv2(input$inputFile$datapath, row.names = NULL)
+  # open upload window on start
+  observe({
+    if(is.null(input$inputFile)){
+      toggleModal(session, 'fileInp_mod', toggle = 'open')
+      uploaded <- TRUE
+    }
+  })
+
+  # automatically close upload window after upload
+  observeEvent(input$inputFile, {
+    toggleModal(session, 'fileInp_mod', toggle = 'close')
   })
   
+  # update data file
+  data <- reactive({
+    
+    if(is.null(input$inputFile)){
+      out <- read.csv2('start.csv', row.names = NULL)
+      
+    } else{
+      out <- read.csv2(input$inputFile$datapath, row.names = NULL)
+    }
+    return(out)
+  })
+
+  #############################################
+  # update selectors based on data
+  #############################################
+  
+  observeEvent(data(), {
+    updateSelectInput(session, "Yaxis",
+                      choices = c(levels(data()$Type), 'Cell Number'))
+    
+    updateCheckboxGroupInput(session, 'Genotype',
+                             choices = levels(data()$Genotype),
+                             selected = levels(data()$Genotype))
+    updateCheckboxGroupInput(session, 'Stage',
+                             choices = levels(data()$Stage),
+                             selected = levels(data()$Stage))
+  })
+
   ##############################################################
   
 
@@ -23,7 +55,7 @@ shinyServer(function(input, output, session) {
       tagList(
         selectizeInput('Label',
                        label = 'Select cell types',
-                       choices = levels(data$Labels), multiple = TRUE,
+                       choices = levels(data()$Labels), multiple = TRUE,
                        selected = cellviews$Label),
         
         actionButton('Label_goButton', 'select all',
@@ -39,7 +71,7 @@ shinyServer(function(input, output, session) {
                  
                  checkboxGroupInput('viewpoint1',
                                 label = NULL,
-                                choices = levels(data$Labels), 
+                                choices = levels(data()$Labels), 
                                 select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome'))
           ),
           column(4,
@@ -49,7 +81,7 @@ shinyServer(function(input, output, session) {
                  
                  checkboxGroupInput('viewpoint2',
                                 label = NULL,
-                                choices = levels(data$Labels),
+                                choices = levels(data()$Labels),
                                 select = c('L2 apical', 'L2 basal', 'L2 basal sup'))
           ),
           column(4,
@@ -59,7 +91,7 @@ shinyServer(function(input, output, session) {
                  
                  checkboxGroupInput('viewpoint3',
                                 label = NULL,
-                                choices = levels(data$Labels))
+                                choices = levels(data()$Labels))
           )
         )
         )
@@ -72,8 +104,8 @@ shinyServer(function(input, output, session) {
     
     preval <- isolate(input$viewpoint1)
     updateCheckboxGroupInput(session, inputId = 'viewpoint1',
-                         choices = levels(data$Labels)[
-                           !levels(data$Labels) %in% c(input$viewpoint2,input$viewpoint3)],
+                         choices = levels(data()$Labels)[
+                           !levels(data()$Labels) %in% c(input$viewpoint2,input$viewpoint3)],
                          select = preval)
   })
   
@@ -82,8 +114,8 @@ shinyServer(function(input, output, session) {
     
     preval <- isolate(input$viewpoint2)
     updateCheckboxGroupInput(session, inputId = 'viewpoint2',
-                         choices = levels(data$Labels)[
-                           !levels(data$Labels) %in% c(input$viewpoint1,input$viewpoint3)],
+                         choices = levels(data()$Labels)[
+                           !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint3)],
                          select = preval)
   })
   
@@ -91,8 +123,8 @@ shinyServer(function(input, output, session) {
     
     preval <- isolate(input$viewpoint3)
     updateCheckboxGroupInput(session, inputId = 'viewpoint3',
-                         choices = levels(data$Labels)[
-                           !levels(data$Labels) %in% c(input$viewpoint1,input$viewpoint2)],
+                         choices = levels(data()$Labels)[
+                           !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint2)],
                          select = preval)
   })
   
@@ -101,9 +133,9 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$Label_goButton, {
     
-    if(length(input$Label) + 1 == length(levels(data$Labels))){
-      # added 1 to account for the empty "" data$Labels
-      sel <- 'L1 apical'} else sel <- levels(data$Labels)
+    if(length(input$Label) + 1 == length(levels(data()$Labels))){
+      # added 1 to account for the empty "" data()$Labels
+      sel <- 'L1 apical'} else sel <- levels(data()$Labels)
       
       updateSelectizeInput(session, inputId = 'Label',
                            selected = sel)
@@ -111,8 +143,8 @@ shinyServer(function(input, output, session) {
   
   observeEvent(input$Stage_goButton, {
     
-    if(length(input$Stage) == length(levels(data$Stage))){
-      sel <- levels(data$Stage)[1] } else sel <- levels(data$Stage)
+    if(length(input$Stage) == length(levels(data()$Stage))){
+      sel <- levels(data()$Stage)[1] } else sel <- levels(data()$Stage)
       
       updateCheckboxGroupInput(session, inputId = 'Stage',
                                selected = sel)
@@ -145,12 +177,12 @@ shinyServer(function(input, output, session) {
       
       # Calculate number of different cells in each stack:
       vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
-      filt.N.cells.stack <- countcells(data = data, vars1)
+      filt.N.cells.stack <- countcells(data = data(), vars1)
       
       x <- cbind(Type = 'Cell Number', filt.N.cells.stack)
       names(x)[names(x) == 'N'] <- 'Value'
       
-    } else x <- data
+    } else x <- data()
     
     return(x)
   })
@@ -442,8 +474,9 @@ shinyServer(function(input, output, session) {
   #############################################
   
   #output$cell_numb_stack <- renderDataTable(N.cells.stack)
-  output$cell_numb_stack <- renderDataTable(countcells(test(), c("Stack", "Genotype", "Stage", "Labels")))
-  
+  output$cell_numb_stack <- renderDataTable(
+    countcells(data(), c("Stack", "Genotype", "Stage", "Labels"))
+    )
   
   output$downloadCellsStack <- downloadHandler(
     filename = 'cellsStack.csv',
@@ -452,7 +485,7 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  output$alldata <- renderDataTable(data)
+  output$alldata <- renderDataTable(data())
   
   #############################################
   #############################################

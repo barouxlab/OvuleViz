@@ -3,21 +3,7 @@
 ##############################################################
 
 if(!'pacman' %in% rownames(installed.packages())) install.packages('pacman')
-pacman::p_load(shiny, shinythemes, shinyBS, ggplot2, plotly, plyr, RColorBrewer, tcltk)
-
-
-##############################################################
-# Import segmented data
-##############################################################
-
-# data <- read.csv2(
-#   tk_choose.files(caption = "Import file with segmented data",
-#                   multi = FALSE,
-#                   filters = matrix(c("csv", ".csv"), 1, 2, byrow = TRUE)),
-#   row.names = NULL)
-
-uploaded <- FALSE
-data <- read.csv2('~/segmented.csv', row.names = NULL)
+pacman::p_load(shiny, shinythemes, shinyBS, ggplot2, plotly, plyr, RColorBrewer)
 
 ##############################################################
 # Import custom color map
@@ -35,12 +21,6 @@ cellviews <- reactiveValues()
 
 cellviews$usevp <- 'no'
 cellviews$Label <- 'L1 apical'
-#cellviews$vp1_name <- 'vp1'
-#cellviews$viewpoint1 <- c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome')
-#cellviews$vp2_name <- 'vp2'
-#cellviews$viewpoint2 <- c('L2 apical', 'L2 basal', 'L2 basal sup')
-#cellviews$vp3_name <- 'vp3'
-#cellviews$viewpoint3 <- c('SMC')
 
 #############################################################
 # functions
@@ -146,10 +126,4 @@ ggoptions <- function(p, title, sclLog, tgr){
   if(tgr){p <- p + theme_grey(18)}
   return(p)
 }
-
-##############################################################
-# calculate number of cells per ovule
-##############################################################
-
-#N.cells.stack <- countcells(data, c("Stack", "Genotype", "Stage", "Labels"))
 

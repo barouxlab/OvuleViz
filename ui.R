@@ -19,7 +19,7 @@ shinyUI(
                    
                    selectInput("Yaxis",
                                label = "Y-axis:",
-                               choices = c(levels(data$Type), 'Cell Number')),
+                               choices = c(levels(data()$Type), 'Cell Number')),
                    
                    column(6,
                           radioButtons('group',
@@ -121,8 +121,8 @@ shinyUI(
                           
                           checkboxGroupInput('Genotype',
                                              label = 'Genotypes',
-                                             choices = levels(data$Genotype),
-                                             selected = levels(data$Genotype)),
+                                             choices = levels(data()$Genotype),
+                                             selected = levels(data()$Genotype)),
                           
                           strong('Tags'),
                           
@@ -133,8 +133,8 @@ shinyUI(
                           
                           checkboxGroupInput('Stage',
                                              label = 'Stages',
-                                             choices = levels(data$Stage),
-                                             selected = levels(data$Stage)),
+                                             choices = levels(data()$Stage),
+                                             selected = levels(data()$Stage)),
                           
                           actionButton('Stage_goButton', 'select all',
                                        class = 'actbut_style', width = '60%'))
