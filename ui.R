@@ -48,7 +48,8 @@ shinyUI(
                                         min = 1, max = 12, value = 3, step = 1, width = '80%'))
                    ),
                    
-                   actionButton('graphOptsBut', 'More options'),
+                   actionButton('graphOptsBut', 'More options',
+                                class = "moreOpt_style"),
                    
                    bsModal('graphOpts', 'Graph options', 'graphOptsBut',
                            size = 'small',
@@ -58,8 +59,7 @@ shinyUI(
                            
                            checkboxInput('gtheme', label = 'grey background',
                                          value = FALSE),
-                           
-                           
+
                            helpText("Color scheme (http://colorbrewer2.org)"),
                            
                            selectizeInput('brewery', label = NULL,
@@ -92,8 +92,11 @@ shinyUI(
                    
                    h3("Data selection"),
                    
-                   actionButton('setCellsBut', 'Set cell types'),
+                   actionButton('setCellsBut', 'Set cell types',
+                                class = "moreOpt_style"),
                    
+                   tags$hr(),
+
                    bsModal('setCells_mod', 'Set cell types', 'setCellsBut',
                            size = 'large',
                            
@@ -104,11 +107,11 @@ shinyUI(
                            
                            uiOutput('views'),
                            
-                           actionButton('submitCell_But', "Apply changes"))),
+                           tags$hr(),
+                           
+                           actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'))),
                  
                  fluidRow(
-                   
-                   tags$hr(),
                    
                    column(6,
                           

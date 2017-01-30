@@ -40,6 +40,34 @@
   color: black;
 }
 
+.downloadBut_style:focus{
+  text-shadow: none;
+  background: none;
+  border-color: white;
+  color: grey;
+  float: right;
+  padding: 2px;
+}
+
+.moreOpt_style {
+  text-shadow: none;
+  border-color: white;
+  background: #D3D3D3;
+  color: black;
+}
+
+.moreOpt_style:focus {
+  text-shadow: none;
+  border-color: white;
+  background: #D3D3D3;
+  color: black;
+}
+
+.applyBut_style {
+  /*float: right; */
+}
+
+
 .panel_style {
   text-shadow: none;
   background: #efefef;
