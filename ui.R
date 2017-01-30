@@ -8,7 +8,6 @@ shinyUI(
         includeCSS("www/styles.css"),
         
         fluidRow(
-          
           verbatimTextOutput('debug'),
           column(3,
                  fluidRow(
@@ -98,18 +97,19 @@ shinyUI(
                    tags$hr(),
 
                    bsModal('setCells_mod', 'Set cell types', 'setCellsBut',
-                           size = 'large',
-                           
-                           radioButtons('usevp',
-                                        label = 'Use viewpoints?',
-                                        choices = c('yes', 'no'),
-                                        selected = 'no'),
-                           
-                           uiOutput('views'),
+
+                           actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'),
                            
                            tags$hr(),
                            
-                           actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'))),
+                           radioButtons('usevp',
+                                        label = 'Use viewpoints?',
+                                        choices = c('yes', 'no'), inline = TRUE,
+                                        selected = 'no'),
+                           
+                           uiOutput('views')
+
+                           )),
                  
                  fluidRow(
                    

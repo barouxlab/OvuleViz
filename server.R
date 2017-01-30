@@ -17,32 +17,32 @@ shinyServer(function(input, output, session) {
       tagList(
         fluidRow(
           column(4,
-                 tags$strong("Viewpoint 1"),
+                 helpText("Viewpoint name"),
                  textInput('vp1_name', label = NULL, value = 'vp1'),
                  helpText("Select cell types"),
                  
-                 selectizeInput('viewpoint1',
-                                label = NULL, multiple = TRUE,
+                 checkboxGroupInput('viewpoint1',
+                                label = NULL,
                                 choices = levels(data$Labels), 
                                 select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome'))
           ),
           column(4,
-                 tags$strong("Viewpoint 2"),
+                 helpText("Viewpoint name"),
                  textInput('vp2_name', label = NULL, value = 'vp2'),
                  helpText("Select cell types"),
                  
-                 selectizeInput('viewpoint2',
-                                label = NULL, multiple = TRUE,
+                 checkboxGroupInput('viewpoint2',
+                                label = NULL,
                                 choices = levels(data$Labels),
                                 select = c('L2 apical', 'L2 basal', 'L2 basal sup'))
           ),
           column(4,
-                 tags$strong("Viewpoint 3"),
+                 helpText("Viewpoint name"),
                  textInput('vp3_name', label = NULL, value = 'vp3'),
                  helpText("Select cell types"),
                  
-                 selectizeInput('viewpoint3',
-                                label = NULL, multiple = TRUE,
+                 checkboxGroupInput('viewpoint3',
+                                label = NULL,
                                 choices = levels(data$Labels))
           )
         )
@@ -51,20 +51,30 @@ shinyServer(function(input, output, session) {
   })
   
   # do not allow overlap between viewpoint selections (would lead to probs with ggplot facet wraping):
+  
   observe({
     
-    preval <- isolate(input$viewpoint2)
-    updateSelectizeInput(session, inputId = 'viewpoint2',
+    preval <- isolate(input$viewpoint1)
+    updateCheckboxGroupInput(session, inputId = 'viewpoint1',
                          choices = levels(data$Labels)[
-                           !levels(data$Labels) %in% input$viewpoint1],
+                           !levels(data$Labels) %in% c(input$viewpoint2,input$viewpoint3)],
                          select = preval)
   })
   
   
   observe({
     
+    preval <- isolate(input$viewpoint2)
+    updateCheckboxGroupInput(session, inputId = 'viewpoint2',
+                         choices = levels(data$Labels)[
+                           !levels(data$Labels) %in% c(input$viewpoint1,input$viewpoint3)],
+                         select = preval)
+  })
+  
+  observe({
+    
     preval <- isolate(input$viewpoint3)
-    updateSelectizeInput(session, inputId = 'viewpoint3',
+    updateCheckboxGroupInput(session, inputId = 'viewpoint3',
                          choices = levels(data$Labels)[
                            !levels(data$Labels) %in% c(input$viewpoint1,input$viewpoint2)],
                          select = preval)

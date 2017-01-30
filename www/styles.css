@@ -64,9 +64,15 @@
 }
 
 .applyBut_style {
-  /*float: right; */
+  border-color: white;
+  background: firebrick;
 }
 
+.applyBut_style:hover {
+  border-color: white;
+  background: firebrick;
+  color: black;
+}
 
 .panel_style {
   text-shadow: none;
