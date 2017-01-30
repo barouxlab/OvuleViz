@@ -9,6 +9,10 @@ shinyUI(
         
         fluidRow(
           verbatimTextOutput('debug'),
+          
+          bsModal('fileInp_mod', title = 'Upload file', trigger = 'mock',
+                  fileInput('inputFile', 'upload file')),
+          
           column(3,
                  fluidRow(
                    h3("Arrangement"),

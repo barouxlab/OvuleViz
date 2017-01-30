@@ -1,5 +1,21 @@
 shinyServer(function(input, output, session) {
   
+  ####################################################
+  # Import segmented data
+  ####################################################
+  
+  if(!uploaded){
+    toggleModal(session, 'fileInp_mod', toggle = 'open')
+    uploaded <- TRUE
+  }
+  
+  test <- reactive({
+    read.csv2(input$inputFile$datapath, row.names = NULL)
+  })
+  
+  ##############################################################
+  
+
   output$views <- renderUI({
     
     if(input$usevp == 'no'){
@@ -425,7 +441,9 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  output$cell_numb_stack <- renderDataTable(N.cells.stack)
+  #output$cell_numb_stack <- renderDataTable(N.cells.stack)
+  output$cell_numb_stack <- renderDataTable(countcells(test(), c("Stack", "Genotype", "Stage", "Labels")))
+  
   
   output$downloadCellsStack <- downloadHandler(
     filename = 'cellsStack.csv',
@@ -440,7 +458,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    cellviews$Label
+    uploaded
   })
   
 })

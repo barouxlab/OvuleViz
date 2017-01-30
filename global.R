@@ -16,6 +16,7 @@ pacman::p_load(shiny, shinythemes, shinyBS, ggplot2, plotly, plyr, RColorBrewer,
 #                   filters = matrix(c("csv", ".csv"), 1, 2, byrow = TRUE)),
 #   row.names = NULL)
 
+uploaded <- FALSE
 data <- read.csv2('~/segmented.csv', row.names = NULL)
 
 ##############################################################
@@ -63,37 +64,6 @@ countcells <- function(data = data, vars1){
                          N = length(Value))
 }
 
-
-groupmeans <- function(data, vars2, Ncells = N.cells.stack){
-  
-  # calculate means and std deviations
-  temp <- ddply(data, c(vars2, "Type"),
-                summarise,
-                mean = mean(Value),
-                sd   = sd(Value),
-                nCells = length(Value),
-                nStacks = length(unique(Stack)))
-  
-  # Average number of cells per stacks:
-  N.cells.mean <- ddply(Ncells,
-                        vars2,
-                        summarise,
-                        Type = "Cell Number",
-                        mean = mean(N),
-                        sd   = sd(N),
-                        nCells = NA,
-                        nStacks = length(N))
-  
-  # Add info on cell numbers:
-  group.summary <- rbind(temp, N.cells.mean)
-  
-  # round
-  group.summary$mean <- round(group.summary$mean, 3)
-  group.summary$sd <- round(group.summary$sd, 3)
-  return(group.summary)
-}
-
-
 # Create viewpoints
 viewpoint <- function(data = data,
                       name_vp1, vp1 = NULL,
@@ -114,8 +84,9 @@ viewpoint <- function(data = data,
 
 #### Render modal output for plot download
 
-# Download pdf workflow is slightly complex: a set of outputs sits in each tab with a plot.
+# Download pdf workflow:
 
+# A set of outputs sits in each tab with a plot.
 # That specific plot (pl())can then be downloaded using a downloadHandler
 # (handle function in Global.R) with custom values for height and width.
 
@@ -180,5 +151,5 @@ ggoptions <- function(p, title, sclLog, tgr){
 # calculate number of cells per ovule
 ##############################################################
 
-N.cells.stack <- countcells(data, c("Stack", "Genotype", "Stage", "Labels"))
+#N.cells.stack <- countcells(data, c("Stack", "Genotype", "Stage", "Labels"))
 
