@@ -1,5 +1,7 @@
 shinyServer(function(input, output, session) {
   
+  options(shiny.maxRequestSize = 50*1024^2) # Max upload size is 50Mbp
+  options(shiny.launch.browser = TRUE)
   ####################################################
   # Import segmented data
   ####################################################
@@ -54,8 +56,6 @@ shinyServer(function(input, output, session) {
   
   ##############################################################
   
-  
-  
   observeEvent(input$setCellsBut, {
     
     showModal(modalDialog(
@@ -63,7 +63,7 @@ shinyServer(function(input, output, session) {
 
       radioButtons('usevp',
                    label = 'Use viewpoints?',
-                   choices = c('yes', 'no'), inline = TRUE,
+                   choices = c('no', 'yes'), inline = TRUE,
                    selected = 'no'),
       
       uiOutput('views'),
