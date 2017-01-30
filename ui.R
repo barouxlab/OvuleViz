@@ -10,11 +10,12 @@ shinyUI(
         fluidRow(
           verbatimTextOutput('debug'),
           
-          bsModal('fileInp_mod', title = 'Upload file', trigger = 'mock',
-                  fileInput('inputFile', 'upload file')),
+          bsModal('fileInp_mod', title = 'Upload file with segmented data', trigger = 'mock',
+                 fileInput('inputFile', label = NULL)),
           
           column(3,
                  fluidRow(
+                   
                    h3("Arrangement"),
                    
                    selectInput("Yaxis",
@@ -171,17 +172,17 @@ shinyUI(
                                               downloadButton('downloadTableMeans', 'Download')),
                                       plotOutput('plotMeans')),
                              tabPanel('table',
-                                      dataTableOutput('gg_data_table'))
+                                      dataTableOutput('gg_data_table'),
+                                      helpText('Download table as a .CSV file'),
+                                      downloadButton('download_gg_data', 'Download'))
                  )
           )
         ))),
-    tabPanel("Tables",
+    tabPanel("Data",
              fluidPage(
                
                tabsetPanel(id = 'tabs2',
                            tabPanel('Original data', dataTableOutput("alldata")),
-                           tabPanel('Cells per stack', dataTableOutput('cell_numb_stack'),
-                                    helpText('Download full table as a .CSV file'),
-                                    downloadButton('downloadCellsStack', 'Download'))
+                           tabPanel('Total stacks', dataTableOutput('cell_numb_stack'))
                )))
   ))

@@ -8,7 +8,6 @@ shinyServer(function(input, output, session) {
   observe({
     if(is.null(input$inputFile)){
       toggleModal(session, 'fileInp_mod', toggle = 'open')
-      uploaded <- TRUE
     }
   })
 
@@ -468,19 +467,22 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
+  output$download_gg_data <- downloadHandler(
+    filename = 'data.csv',
+    content = function(file) {write.csv2(gg_data(), file, quote = FALSE, row.names = FALSE)})
+  
   output$gg_data_table <- renderDataTable(gg_data())
   
   #############################################
   #############################################
   
-  #output$cell_numb_stack <- renderDataTable(N.cells.stack)
   output$cell_numb_stack <- renderDataTable(
-    countcells(data(), c("Stack", "Genotype", "Stage", "Labels"))
+    
+    ddply(data()[data()$Type == "Cell Volume", c("Genotype", "Stage", "Stack")],
+          c("Genotype", "Stage"),
+          summarise,
+          Number_stacks = length(unique(Stack)))
     )
-  
-  output$downloadCellsStack <- downloadHandler(
-    filename = 'cellsStack.csv',
-    content = function(file) {write.csv2(N.cells.stack, file, quote = FALSE, row.names = FALSE)})
   
   #############################################
   #############################################
@@ -491,7 +493,7 @@ shinyServer(function(input, output, session) {
   #############################################
   
   output$debug <- renderPrint({
-    uploaded
+    
   })
   
 })
