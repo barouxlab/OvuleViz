@@ -6,15 +6,23 @@ shinyServer(function(input, output, session) {
   
   # open upload window on start
   observe({
+    
     if(is.null(input$inputFile)){
-      toggleModal(session, 'fileInp_mod', toggle = 'open')
+      showModal(
+        modalDialog(
+          fileInput('inputFile', label = NULL),
+          title = 'Upload file with segmented data',
+          footer = NULL,
+          fade = FALSE
+        )
+      )
     }
   })
-
+  
   # automatically close upload window after upload
-  observeEvent(input$inputFile, {
-    toggleModal(session, 'fileInp_mod', toggle = 'close')
-  })
+   observeEvent(input$inputFile, {
+     removeModal(session)
+   })
   
   # update data file
   data <- reactive({
@@ -27,7 +35,7 @@ shinyServer(function(input, output, session) {
     }
     return(out)
   })
-
+  
   #############################################
   # update selectors based on data
   #############################################
@@ -43,10 +51,36 @@ shinyServer(function(input, output, session) {
                              choices = levels(data()$Stage),
                              selected = levels(data()$Stage))
   })
-
+  
   ##############################################################
   
+  
+  
+  observeEvent(input$setCellsBut, {
+    
+    showModal(modalDialog(
+      title = "Set viewpoints and cell labels",
 
+      radioButtons('usevp',
+                   label = 'Use viewpoints?',
+                   choices = c('yes', 'no'), inline = TRUE,
+                   selected = 'no'),
+      
+      uiOutput('views'),
+      
+      size = 'm',
+      
+      footer = tagList(shiny::actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'),
+                       shiny::modalButton("Dismiss"))
+      
+    ))
+    
+  })
+  
+  
+  ##############################################################
+  ##############################################################
+  
   output$views <- renderUI({
     
     if(input$usevp == 'no'){
@@ -69,9 +103,9 @@ shinyServer(function(input, output, session) {
                  helpText("Select cell types"),
                  
                  checkboxGroupInput('viewpoint1',
-                                label = NULL,
-                                choices = levels(data()$Labels), 
-                                select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome'))
+                                    label = NULL,
+                                    choices = levels(data()$Labels), 
+                                    select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome'))
           ),
           column(4,
                  helpText("Viewpoint name"),
@@ -79,9 +113,9 @@ shinyServer(function(input, output, session) {
                  helpText("Select cell types"),
                  
                  checkboxGroupInput('viewpoint2',
-                                label = NULL,
-                                choices = levels(data()$Labels),
-                                select = c('L2 apical', 'L2 basal', 'L2 basal sup'))
+                                    label = NULL,
+                                    choices = levels(data()$Labels),
+                                    select = c('L2 apical', 'L2 basal', 'L2 basal sup'))
           ),
           column(4,
                  helpText("Viewpoint name"),
@@ -89,11 +123,11 @@ shinyServer(function(input, output, session) {
                  helpText("Select cell types"),
                  
                  checkboxGroupInput('viewpoint3',
-                                label = NULL,
-                                choices = levels(data()$Labels))
+                                    label = NULL,
+                                    choices = levels(data()$Labels))
           )
         )
-        )
+      )
     }
   })
   
@@ -103,9 +137,9 @@ shinyServer(function(input, output, session) {
     
     preval <- isolate(input$viewpoint1)
     updateCheckboxGroupInput(session, inputId = 'viewpoint1',
-                         choices = levels(data()$Labels)[
-                           !levels(data()$Labels) %in% c(input$viewpoint2,input$viewpoint3)],
-                         select = preval)
+                             choices = levels(data()$Labels)[
+                               !levels(data()$Labels) %in% c(input$viewpoint2,input$viewpoint3)],
+                             select = preval)
   })
   
   
@@ -113,18 +147,18 @@ shinyServer(function(input, output, session) {
     
     preval <- isolate(input$viewpoint2)
     updateCheckboxGroupInput(session, inputId = 'viewpoint2',
-                         choices = levels(data()$Labels)[
-                           !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint3)],
-                         select = preval)
+                             choices = levels(data()$Labels)[
+                               !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint3)],
+                             select = preval)
   })
   
   observe({
     
     preval <- isolate(input$viewpoint3)
     updateCheckboxGroupInput(session, inputId = 'viewpoint3',
-                         choices = levels(data()$Labels)[
-                           !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint2)],
-                         select = preval)
+                             choices = levels(data()$Labels)[
+                               !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint2)],
+                             select = preval)
   })
   
   #############################################
@@ -162,8 +196,8 @@ shinyServer(function(input, output, session) {
     cellviews$viewpoint2 <- input$viewpoint2
     cellviews$vp3_name <- input$vp3_name
     cellviews$viewpoint3 <- input$viewpoint3
-
-    })
+    
+  })
   
   ####################################################
   # Create plotdata reactive dataset
@@ -482,7 +516,7 @@ shinyServer(function(input, output, session) {
           c("Genotype", "Stage"),
           summarise,
           Number_stacks = length(unique(Stack)))
-    )
+  )
   
   #############################################
   #############################################

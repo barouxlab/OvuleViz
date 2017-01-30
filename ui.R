@@ -10,9 +10,6 @@ shinyUI(
         fluidRow(
           verbatimTextOutput('debug'),
           
-          bsModal('fileInp_mod', title = 'Upload file with segmented data', trigger = 'mock',
-                 fileInput('inputFile', label = NULL)),
-          
           column(3,
                  fluidRow(
                    
@@ -99,22 +96,23 @@ shinyUI(
                    actionButton('setCellsBut', 'Set cell types',
                                 class = "moreOpt_style"),
                    
-                   tags$hr(),
-
-                   bsModal('setCells_mod', 'Set cell types', 'setCellsBut',
-
-                           actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'),
-                           
-                           tags$hr(),
-                           
-                           radioButtons('usevp',
-                                        label = 'Use viewpoints?',
-                                        choices = c('yes', 'no'), inline = TRUE,
-                                        selected = 'no'),
-                           
-                           uiOutput('views')
-
-                           )),
+                   tags$hr()
+                   
+                   # bsModal('setCells_mod', 'Set cell types', 'setCellsBut',
+                   # 
+                   #         actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'),
+                   #         
+                   #         tags$hr(),
+                   #         
+                   #         radioButtons('usevp',
+                   #                      label = 'Use viewpoints?',
+                   #                      choices = c('yes', 'no'), inline = TRUE,
+                   #                      selected = 'no'),
+                   #         
+                   #         uiOutput('views')
+                   # 
+                   #         )
+                   ),
                  
                  fluidRow(
                    
