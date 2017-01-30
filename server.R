@@ -71,7 +71,7 @@ shinyServer(function(input, output, session) {
       size = 'm',
       
       footer = tagList(shiny::actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'),
-                       shiny::modalButton("Dismiss"))
+                       shiny::modalButton("Close"))
       
     ))
     
