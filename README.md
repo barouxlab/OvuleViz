@@ -1,14 +1,18 @@
 # OvuleViz
-Graphical interface to analyse segmented cell data</br>
-v1.1 (27/01/2017)
+Graphical interface to analyse segmented cell data
+
+v1.1 (30/01/2017)
 
 #### To start the analysis run (from an R console):
-library(shiny)</br>
-runGitHub( "OvuleViz", "piresn", launch.browser = TRUE)
-
+```R
+library(shiny)
+runGitHub( "OvuleViz", "piresn")
+```
 
 #### To create a segmented data file from Imaris output run (from an R console):
-library(RCurl)<br/>
-u <- 'https://raw.githubusercontent.com/piresn/OvuleViz/master/getData.R'<br/>
-script <- getURL(u, ssl.verifypeer = FALSE)<br/>
+```R
+library(RCurl)
+u <- 'https://raw.githubusercontent.com/piresn/OvuleViz/master/getData.R'
+script <- getURL(u, ssl.verifypeer = FALSE)
 eval(parse(text = script))
+```
