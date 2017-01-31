@@ -26,6 +26,8 @@ cellviews <- reactiveValues()
 cellviews$usevp <- 'no'
 cellviews$Label <- 'L1 apical'
 
+cellviews$brewery <- 'Dark2'
+
 #############################################################
 # functions
 ##############################################################

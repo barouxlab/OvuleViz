@@ -207,6 +207,10 @@ shinyServer(function(input, output, session) {
     
   })
   
+  observeEvent(input$brewery,{
+    cellviews$brewery <- input$brewery
+  })
+  
   #############################################
   # update group and colorize choices depending on viewpoint use
   #############################################
@@ -323,7 +327,7 @@ shinyServer(function(input, output, session) {
       
       x <- col.map(data = vipdata(),
                    colorize = input$colorize,
-                   brew = input$brewery)
+                   brew = cellviews$brewery)
     }
     return(x)
   })
@@ -358,10 +362,10 @@ shinyServer(function(input, output, session) {
       )
       
       # set selected value
-      if(input$brewery %in% unlist(available_brews)){
+      if(cellviews$brewery %in% unlist(available_brews)){
         
         # keep last used color scheme when available
-        precolval <- input$brewery
+        precolval <- cellviews$brewery
         
       } else {
         
