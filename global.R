@@ -25,6 +25,12 @@ cellviews <- reactiveValues()
 
 cellviews$usevp <- 'no'
 cellviews$Label <- 'L1 apical'
+cellviews$vp1_name <- 'vp1'
+cellviews$vp2_name <- 'vp2'
+cellviews$vp3_name <- 'vp3'
+cellviews$viewpoint1 <-  c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome')
+cellviews$viewpoint2 <- c('L2 apical', 'L2 basal', 'L2 basal sup')
+cellviews$viewpoint3 <- NULL
 
 # set color scheme value
 cellviews$brewery <- 'Dark2'

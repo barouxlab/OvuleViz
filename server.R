@@ -102,34 +102,35 @@ shinyServer(function(input, output, session) {
           
           column(4,
                  helpText("Viewpoint name"),
-                 textInput('vp1_name', label = NULL, value = 'vp1'),
+                 textInput('vp1_name', label = NULL, value = cellviews$vp1_name),
                  helpText("Select cell types"),
                  
                  checkboxGroupInput('viewpoint1',
                                     label = NULL,
                                     choices = levels(data()$Labels), 
-                                    select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome')
+                                    select = cellviews$viewpoint1
                  )
           ),
           column(4,
                  helpText("Viewpoint name"),
-                 textInput('vp2_name', label = NULL, value = 'vp2'),
+                 textInput('vp2_name', label = NULL, value = cellviews$vp2_name),
                  helpText("Select cell types"),
                  
                  checkboxGroupInput('viewpoint2',
                                     label = NULL,
                                     choices = levels(data()$Labels),
-                                    select = c('L2 apical', 'L2 basal', 'L2 basal sup')
+                                    select = cellviews$viewpoint2
                  )
           ),
           column(4,
                  helpText("Viewpoint name"),
-                 textInput('vp3_name', label = NULL, value = 'vp3'),
+                 textInput('vp3_name', label = NULL, value = cellviews$vp3_name),
                  helpText("Select cell types"),
                  
                  checkboxGroupInput('viewpoint3',
                                     label = NULL,
-                                    choices = levels(data()$Labels))
+                                    choices = levels(data()$Labels),
+                                    cellviews$viewpoint3)
           )
         )
       )
@@ -143,6 +144,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     
+    input$submitCell_But
     preval_vp1 <- input$viewpoint1
     updateCheckboxGroupInput(session, inputId = 'viewpoint1',
                              choices = levels(data()$Labels)[
@@ -153,6 +155,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     
+    input$submitCell_But
     preval_vp2 <- input$viewpoint2
     updateCheckboxGroupInput(session, inputId = 'viewpoint2',
                              choices = levels(data()$Labels)[
@@ -162,6 +165,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     
+    input$submitCell_But
     preval_vp3 <- input$viewpoint3
     updateCheckboxGroupInput(session, inputId = 'viewpoint3',
                              choices = levels(data()$Labels)[
