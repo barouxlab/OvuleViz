@@ -1,7 +1,6 @@
 shinyServer(function(input, output, session) {
   
-  options(shiny.maxRequestSize = 50*1024^2) # Max upload size is 50Mbp
-  options(shiny.launch.browser = TRUE)
+  
   ####################################################
   # Import segmented data
   ####################################################
@@ -15,16 +14,15 @@ shinyServer(function(input, output, session) {
           fileInput('inputFile', label = NULL),
           title = 'Upload file with segmented data',
           footer = NULL,
-          fade = FALSE
-        )
+          fade = FALSE)
       )
     }
   })
   
   # automatically close upload window after upload
-   observeEvent(input$inputFile, {
-     removeModal(session)
-   })
+  observeEvent(input$inputFile, {
+    removeModal(session)
+  })
   
   # update data file
   data <- reactive({
@@ -49,6 +47,7 @@ shinyServer(function(input, output, session) {
     updateCheckboxGroupInput(session, 'Genotype',
                              choices = levels(data()$Genotype),
                              selected = levels(data()$Genotype))
+    
     updateCheckboxGroupInput(session, 'Stage',
                              choices = levels(data()$Stage),
                              selected = levels(data()$Stage))
@@ -60,21 +59,21 @@ shinyServer(function(input, output, session) {
     
     showModal(modalDialog(
       title = "Set viewpoints and cell labels",
-
+      
       radioButtons('usevp',
                    label = 'Use viewpoints?',
                    choices = c('no', 'yes'), inline = TRUE,
-                   selected = 'no'),
+                   selected = cellviews$usevp),
       
       uiOutput('views'),
       
       size = 'm',
       
-      footer = tagList(shiny::actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'),
+      footer = tagList(shiny::actionButton('submitCell_But', "Apply changes",
+                                           class = 'applyBut_style'),
                        shiny::modalButton("Close"))
-      
-    ))
-    
+    )
+    )
   })
   
   
@@ -88,15 +87,19 @@ shinyServer(function(input, output, session) {
       tagList(
         selectizeInput('Label',
                        label = 'Select cell types',
-                       choices = levels(data()$Labels), multiple = TRUE,
+                       choices = levels(data()$Labels),
+                       multiple = TRUE,
                        selected = cellviews$Label),
         
         actionButton('Label_goButton', 'select all',
-                     class = 'actbut_style', width = '20%'))
+                     class = 'actbut_style', width = '20%')
+      )
       
-    } else{
+    } else if(input$usevp == 'yes'){
+      
       tagList(
         fluidRow(
+          
           column(4,
                  helpText("Viewpoint name"),
                  textInput('vp1_name', label = NULL, value = 'vp1'),
@@ -105,7 +108,8 @@ shinyServer(function(input, output, session) {
                  checkboxGroupInput('viewpoint1',
                                     label = NULL,
                                     choices = levels(data()$Labels), 
-                                    select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome'))
+                                    select = c('L1 apical', 'L1 basal', 'L1 basal sup', 'L1 dome')
+                 )
           ),
           column(4,
                  helpText("Viewpoint name"),
@@ -115,7 +119,8 @@ shinyServer(function(input, output, session) {
                  checkboxGroupInput('viewpoint2',
                                     label = NULL,
                                     choices = levels(data()$Labels),
-                                    select = c('L2 apical', 'L2 basal', 'L2 basal sup'))
+                                    select = c('L2 apical', 'L2 basal', 'L2 basal sup')
+                 )
           ),
           column(4,
                  helpText("Viewpoint name"),
@@ -202,7 +207,7 @@ shinyServer(function(input, output, session) {
   ####################################################
   # Create plotdata reactive dataset
   ####################################################
-  #   depending on the cell type chosen, defines the dataset to plot
+  #   depending on the y-axis variable chosen, defines the dataset to plot
   
   plotdata <- reactive({
     
@@ -232,6 +237,7 @@ shinyServer(function(input, output, session) {
   vipdata <- reactive({
     
     if(cellviews$usevp == 'yes'){
+      
       x <- viewpoint(plotdata(),
                      name_vp1 = cellviews$vp1_name, vp1 = cellviews$viewpoint1,
                      name_vp2 = cellviews$vp2_name, vp2 = cellviews$viewpoint2,
@@ -286,8 +292,10 @@ shinyServer(function(input, output, session) {
   ####################################################
   # Create gg_data reactive dataset
   ####################################################
+  
   # subset of vip_data() values that are plotted
   # keep it separate so that color map is not changed when subsetting plots
+  
   gg_data <- reactive({
     x <- subset(vipdata(),
                 Genotype %in% input$Genotype &
@@ -324,13 +332,23 @@ shinyServer(function(input, output, session) {
     precolval <- input$brewery
     
     updateSelectizeInput(session, 'brewery',
-                         choices = list(
-                           'qualitative' = rownames(subset(
-                             brewer.pal.info, category %in% 'qual' &
-                               maxcolors >= length(levels(vipdata()[, input$colorize])))),
-                           'sequential' = rownames(subset(
-                             brewer.pal.info, category %in% 'seq' &
-                               maxcolors >= length(levels(vipdata()[, input$colorize]))))),
+                         choices = list('qualitative' = rownames(
+                           subset(
+                             brewer.pal.info,
+                             category %in% 'qual' &
+                               maxcolors >= length(levels(vipdata()[, input$colorize])
+                               )
+                           )
+                         ),
+                         'sequential' = rownames(
+                           subset(
+                             brewer.pal.info,
+                             category %in% 'seq' &
+                               maxcolors >= length(levels(vipdata()[, input$colorize])
+                               )
+                           )
+                         )
+                         ),
                          selected = precolval)
   })
   
@@ -342,15 +360,15 @@ shinyServer(function(input, output, session) {
   # get value for plot height
   plheight <- reactive(as.numeric(input$plheight))
   
-  
   ####################################################
   ####################################################
   
   observe({
     
     if(input$tabs1 == 'boxplot'){
+      
       pl_bx <- reactive({
-        # Bug? Have to call colormap() here because it was not active inside ggplot function!
+        # Bug? Have to call colormap() here because it was not active inside ggplot function
         colormap()
         source('prePlot.R', local = TRUE)
         p <- p + geom_boxplot(color = 'grey20', group = input$colorize)
@@ -402,17 +420,9 @@ shinyServer(function(input, output, session) {
       ggplotly(p, source = 'A') %>%
         layout(height = input$plheight, width = 'auto', autosize=TRUE,
                dragmode = "select", margin = list(b = 100))
-    })
+    }
+    )
   })
-  
-  # #Not run - retrieve table with values selected on plotly
-  # #would need to add key = key to aes  dodge.width = 0
-  # key <- rownames(gg_data())
-  # output$selectTable <-  renderDataTable({
-  #   d <- NULL
-  #   d <- event_data("plotly_selected", source = 'A')$key
-  #   if(!is.null(d)) selected <- gg_data()[d,]
-  # })
   
   #############################################
   #############################################
@@ -482,7 +492,9 @@ shinyServer(function(input, output, session) {
           scale_fill_manual(values = colormap(), name = NULL)
         
         p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
+        
         return(p)
+        
       })
       
       #######
@@ -526,8 +538,7 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  output$debug <- renderPrint({
-    
-  })
+  # output$debug <- renderPrint({
+  # })
   
 })

@@ -5,6 +5,10 @@
 if(!'pacman' %in% rownames(installed.packages())) install.packages('pacman')
 pacman::p_load(shiny, shinythemes, shinyBS, ggplot2, plotly, plyr, RColorBrewer)
 
+
+options(shiny.maxRequestSize = 50*1024^2) # Max upload size is 50Mbp
+options(shiny.launch.browser = TRUE)
+
 ##############################################################
 # Import custom color map
 ##############################################################

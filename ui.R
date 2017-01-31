@@ -17,13 +17,15 @@ shinyUI(
                    
                    selectInput("Yaxis",
                                label = "Y-axis:",
-                               choices = c(levels(data()$Type), 'Cell Number')),
+                               choices = c(levels(data()$Type), 'Cell Number')
+                   ),
                    
                    column(6,
                           radioButtons('group',
                                        label = 'Split plots on:',
                                        choices = c(GLSNS),
-                                       selected = 'Labels')),
+                                       selected = 'Labels')
+                   ),
                    column(6,
                           
                           radioButtons('colorize',
@@ -43,10 +45,12 @@ shinyUI(
                      
                      column(6,
                             sliderInput('plheight', label = 'Plot height', ticks = FALSE,
-                                        min = 200, max = 2000, value = 600, step = 200, width = '80%')),
+                                        min = 200, max = 2000, value = 600, step = 200, width = '80%')
+                     ),
                      column(6,
                             sliderInput('ncols', label = 'Plots per row', ticks = FALSE,
-                                        min = 1, max = 12, value = 3, step = 1, width = '80%'))
+                                        min = 1, max = 12, value = 3, step = 1, width = '80%')
+                     )
                    ),
                    
                    actionButton('graphOptsBut', 'More options',
@@ -60,7 +64,7 @@ shinyUI(
                            
                            checkboxInput('gtheme', label = 'grey background',
                                          value = FALSE),
-
+                           
                            helpText("Color scheme (http://colorbrewer2.org)"),
                            
                            selectizeInput('brewery', label = NULL,
@@ -73,20 +77,27 @@ shinyUI(
                    tags$hr(),
                    
                    conditionalPanel("input.tabs1 == 'histogram'", class = 'panel_style',
+                                    
                                     h3('Histogram options'),
+                                    
                                     radioButtons('density', label = 'Y-axis:',
                                                  choices = c('counts', 'density'),
                                                  selected = 'density'),
+                                    
                                     sliderInput('bin', label = 'Number of bins', ticks = FALSE,
                                                 min = 2, max = 100, value = 40,
-                                                step = 2, width = '60%')),
+                                                step = 2, width = '60%')
+                   ),
                    
                    
                    conditionalPanel("input.tabs1 == 'scatter'",
                                     class = 'panel_style',
+                                    
                                     h3('Scatterplot options'),
+                                    
                                     checkboxInput('interact', label = 'Interactive plot (slower)',
-                                                  value = FALSE))
+                                                  value = FALSE)
+                   )
                  ),
                  
                  fluidRow(
@@ -98,21 +109,7 @@ shinyUI(
                    
                    tags$hr()
                    
-                   # bsModal('setCells_mod', 'Set cell types', 'setCellsBut',
-                   # 
-                   #         actionButton('submitCell_But', "Apply changes", class = 'applyBut_style'),
-                   #         
-                   #         tags$hr(),
-                   #         
-                   #         radioButtons('usevp',
-                   #                      label = 'Use viewpoints?',
-                   #                      choices = c('yes', 'no'), inline = TRUE,
-                   #                      selected = 'no'),
-                   #         
-                   #         uiOutput('views')
-                   # 
-                   #         )
-                   ),
+                 ),
                  
                  fluidRow(
                    
@@ -121,66 +118,97 @@ shinyUI(
                           checkboxGroupInput('Genotype',
                                              label = 'Genotypes',
                                              choices = levels(data()$Genotype),
-                                             selected = levels(data()$Genotype)),
+                                             selected = levels(data()$Genotype)
+                          ),
                           
                           strong('Tags'),
                           
                           checkboxInput('SMCneighb',
                                         label = 'only SMC neighbour cells',
-                                        value = FALSE)),
+                                        value = FALSE)
+                   ),
                    column(6,
                           
                           checkboxGroupInput('Stage',
                                              label = 'Stages',
                                              choices = levels(data()$Stage),
-                                             selected = levels(data()$Stage)),
+                                             selected = levels(data()$Stage)
+                          ),
                           
                           actionButton('Stage_goButton', 'select all',
-                                       class = 'actbut_style', width = '60%'))
+                                       class = 'actbut_style', width = '60%')
+                   )
                  )
           ),
           
           column(9,
+                 
                  tabsetPanel(id = 'tabs1',
+                             
                              tabPanel('boxplot',
+                                      
                                       uiOutput('UIgetpdf_bx'),
-                                      plotOutput('plotBoxplot')),
+                                      plotOutput('plotBoxplot')
+                             ),
+                             
                              tabPanel('scatter',
+                                      
                                       conditionalPanel("input.interact == false",
                                                        uiOutput('UIgetpdf_jit'),
-                                                       plotOutput('plotJitter')),
+                                                       plotOutput('plotJitter')
+                                      ),
+                                      
                                       conditionalPanel("input.interact == true",
                                                        plotlyOutput('jitter_i', height = 'auto'),
                                                        #textOutput("selectTable")
                                                        dataTableOutput("selectTable")
-                                      )),
+                                      )
+                             ),
+                             
                              tabPanel('histogram',
+                                      
                                       uiOutput('UIgetpdf_h'),
-                                      plotOutput('plotHist')),
+                                      plotOutput('plotHist')
+                             ),
+                             
                              tabPanel('means',
+                                      
                                       helpText('Error bars represent standard deviation.'),
                                       fluidRow(
                                         actionButton('MeanTabButton', label = 'View as table',
-                                                     class = 'downloadBut_style')),
+                                                     class = 'downloadBut_style')
+                                      ),
                                       
-                                      fluidRow(uiOutput('UIgetpdf_mn')),
+                                      fluidRow(uiOutput('UIgetpdf_mn')
+                                      ),
                                       bsModal('tabMeansMod', 'Mean ± SD', 'MeanTabButton',
                                               dataTableOutput('tableMeans'),
                                               helpText('Download as a .CSV file'),
-                                              downloadButton('downloadTableMeans', 'Download')),
-                                      plotOutput('plotMeans')),
+                                              downloadButton('downloadTableMeans', 'Download')
+                                      ),
+                                      plotOutput('plotMeans')
+                             ),
+                             
                              tabPanel('table',
+                                      
                                       dataTableOutput('gg_data_table'),
                                       helpText('Download table as a .CSV file'),
-                                      downloadButton('download_gg_data', 'Download'))
+                                      downloadButton('download_gg_data', 'Download')
+                             )
                  )
           )
-        ))),
+        )
+      )
+    ),
+    
     tabPanel("Data",
+             
              fluidPage(
-               
                tabsetPanel(id = 'tabs2',
                            tabPanel('Original data', dataTableOutput("alldata")),
                            tabPanel('Total stacks', dataTableOutput('cell_numb_stack'))
-               )))
-  ))
+               )
+             )
+    )
+  )
+)
