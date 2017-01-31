@@ -26,6 +26,7 @@ cellviews <- reactiveValues()
 cellviews$usevp <- 'no'
 cellviews$Label <- 'L1 apical'
 
+# set color scheme value
 cellviews$brewery <- 'Dark2'
 
 #############################################################
@@ -65,7 +66,7 @@ viewpoint <- function(data = data,
   data$Viewpoints <- factor(data$Viewpoints)
   
   # change levels of Labels (to allow custom plotting order)
-  data$Labels <- factor(data$Labels)#, levels = c(vp1, vp2, vp3))
+  data$Labels <- factor(data$Labels, levels = c(vp1, vp2, vp3))
   
   return(data)
 }

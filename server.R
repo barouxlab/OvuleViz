@@ -565,8 +565,7 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  output$debug <- renderPrint({
-
-  })
+  # output$debug <- renderPrint({
+  # })
   
 })
