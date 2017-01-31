@@ -144,7 +144,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     
-    input$submitCell_But
+    c(input$submitCell_But, input$usevp)
     preval_vp1 <- input$viewpoint1
     updateCheckboxGroupInput(session, inputId = 'viewpoint1',
                              choices = levels(data()$Labels)[
@@ -155,7 +155,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     
-    input$submitCell_But
+    c(input$submitCell_But, input$usevp)
     preval_vp2 <- input$viewpoint2
     updateCheckboxGroupInput(session, inputId = 'viewpoint2',
                              choices = levels(data()$Labels)[
@@ -165,7 +165,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     
-    input$submitCell_But
+    c(input$submitCell_But, input$usevp)
     preval_vp3 <- input$viewpoint3
     updateCheckboxGroupInput(session, inputId = 'viewpoint3',
                              choices = levels(data()$Labels)[
