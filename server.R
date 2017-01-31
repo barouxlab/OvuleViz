@@ -136,34 +136,37 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  # do not allow overlap between viewpoint selections (would lead to probs with ggplot facet wraping):
+  ##############################################################
+  # do not allow overlap between viewpoint selections
+  # (would lead to probs with ggplot facet wraping):
+  ##############################################################
   
   observe({
     
-    preval <- isolate(input$viewpoint1)
+    preval_vp1 <- input$viewpoint1
     updateCheckboxGroupInput(session, inputId = 'viewpoint1',
                              choices = levels(data()$Labels)[
-                               !levels(data()$Labels) %in% c(input$viewpoint2,input$viewpoint3)],
-                             select = preval)
+                               !levels(data()$Labels) %in% c(input$viewpoint2, input$viewpoint3)],
+                             select = input$viewpoint1)
   })
   
   
   observe({
     
-    preval <- isolate(input$viewpoint2)
+    preval_vp2 <- input$viewpoint2
     updateCheckboxGroupInput(session, inputId = 'viewpoint2',
                              choices = levels(data()$Labels)[
-                               !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint3)],
-                             select = preval)
+                               !levels(data()$Labels) %in% c(input$viewpoint1, input$viewpoint3)],
+                             select = input$viewpoint2)
   })
   
   observe({
     
-    preval <- isolate(input$viewpoint3)
+    preval_vp3 <- input$viewpoint3
     updateCheckboxGroupInput(session, inputId = 'viewpoint3',
                              choices = levels(data()$Labels)[
-                               !levels(data()$Labels) %in% c(input$viewpoint1,input$viewpoint2)],
-                             select = preval)
+                               !levels(data()$Labels) %in% c(input$viewpoint1, input$viewpoint2)],
+                             select = input$viewpoint3)
   })
   
   #############################################
@@ -202,6 +205,36 @@ shinyServer(function(input, output, session) {
     cellviews$vp3_name <- input$vp3_name
     cellviews$viewpoint3 <- input$viewpoint3
     
+  })
+  
+  #############################################
+  # update group and colorize choices depending on viewpoint use
+  #############################################
+  
+  observe({
+    
+    prevVal1 <- input$group
+    prevVal2 <- input$colorize
+    
+    if(cellviews$usevp == 'no') {
+      prevVal1[prevVal1 == 'Viewpoints'] <- 'Labels'
+      prevVal2[prevVal2 == 'Viewpoints'] <- 'Labels'
+      ch_Group <- GLSNS
+      ch_Color <- GLSN
+    }
+    
+    if(cellviews$usevp == 'yes') {
+      ch_Group <- GLVSNS
+      ch_Color <- GLVSN
+    }
+    
+    updateRadioButtons(session, inputId = 'group',
+                       choices = ch_Group,
+                       select = prevVal1)
+    
+    updateRadioButtons(session, inputId = 'colorize',
+                       choices = ch_Color,
+                       select = prevVal2)
   })
   
   ####################################################
@@ -260,35 +293,6 @@ shinyServer(function(input, output, session) {
   })
   
   
-  #############################################
-  # update group and colorize choices depending on type of plot
-  #############################################
-  
-  observe({
-    
-    prevVal <- c(input$group, input$colorize)
-    
-    if(cellviews$usevp == 'no') {
-      prevVal[prevVal == 'Viewpoints'] <- 'Labels'
-      ch_Group <- GLSNS
-      ch_Color <- GLSN
-    }
-    
-    if(cellviews$usevp == 'yes') {
-      ch_Group <- GLVSNS
-      ch_Color <- GLVSN
-    }
-    
-    updateRadioButtons(session, inputId = 'group',
-                       choices = ch_Group,
-                       select = prevVal[1])
-    
-    updateRadioButtons(session, inputId = 'colorize',
-                       choices = ch_Color,
-                       select = prevVal[2])
-  })
-  
-  
   ####################################################
   # Create gg_data reactive dataset
   ####################################################
@@ -324,32 +328,51 @@ shinyServer(function(input, output, session) {
     return(x)
   })
   
-  #############################################
-  #############################################
+  ####################################################
+  # Update color scheme choices depending on colorize factor
+  ####################################################
   
   observe({
     
-    precolval <- input$brewery
-    
-    updateSelectizeInput(session, 'brewery',
-                         choices = list('qualitative' = rownames(
-                           subset(
-                             brewer.pal.info,
-                             category %in% 'qual' &
-                               maxcolors >= length(levels(vipdata()[, input$colorize])
-                               )
-                           )
-                         ),
-                         'sequential' = rownames(
-                           subset(
-                             brewer.pal.info,
-                             category %in% 'seq' &
-                               maxcolors >= length(levels(vipdata()[, input$colorize])
-                               )
-                           )
-                         )
-                         ),
-                         selected = precolval)
+    if(input$customcol & input$colorize == 'Labels'){
+      
+      # do nothing while using Labels with custom colors
+      
+    } else {
+      
+      # list available brews
+      
+      available_brews <- list(
+        'qualitative' = rownames(
+          subset(brewer.pal.info,
+                 category %in% 'qual' &
+                   maxcolors >= length(levels(vipdata()[, input$colorize]))
+          )
+        ),
+        'sequential' = rownames(
+          subset(brewer.pal.info,
+                 category %in% 'seq' &
+                   maxcolors >= length(levels(vipdata()[, input$colorize]))
+          )
+        )
+      )
+      
+      # set selected value
+      if(input$brewery %in% unlist(available_brews)){
+        
+        # keep last used color scheme when available
+        precolval <- input$brewery
+        
+      } else {
+        
+        # use the first available color scheme when previous is not available
+        precolval <- unlist(available_brews)[1]
+      }
+      
+      updateSelectizeInput(session, 'brewery',
+                           choices = available_brews,
+                           selected = precolval)
+    }
   })
   
   #####################################
@@ -538,7 +561,8 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  # output$debug <- renderPrint({
-  # })
+  output$debug <- renderPrint({
+
+  })
   
 })

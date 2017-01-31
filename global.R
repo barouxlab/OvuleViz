@@ -52,16 +52,18 @@ countcells <- function(data = data, vars1){
 viewpoint <- function(data = data,
                       name_vp1, vp1 = NULL,
                       name_vp2, vp2 = NULL,
-                      name_vp3, vp3 = NULL
-){
+                      name_vp3, vp3 = NULL){
+  
   data$Viewpoints <- NA
   data[data$Labels %in% vp1, 'Viewpoints'] <- name_vp1
   data[data$Labels %in% vp2, 'Viewpoints'] <- name_vp2
   data[data$Labels %in% vp3, 'Viewpoints'] <- name_vp3
+  
   data <- data[complete.cases(data$Viewpoints),]
+  data$Viewpoints <- factor(data$Viewpoints)
   
   # change levels of Labels (to allow custom plotting order)
-  data$Labels <- factor(data$Labels, levels = c(vp1, vp2, vp3))
+  data$Labels <- factor(data$Labels)#, levels = c(vp1, vp2, vp3))
   
   return(data)
 }
