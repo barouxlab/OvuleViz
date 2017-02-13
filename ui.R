@@ -8,7 +8,7 @@ shinyUI(
         includeCSS("www/styles.css"),
         
         fluidRow(
-          #verbatimTextOutput('debug'),
+          verbatimTextOutput('debug'),
           
           column(3,
                  fluidRow(

@@ -1,5 +1,5 @@
 .shiny-output-error{
-  visibility: hidden; /* use visible or hidden */
+  visibility: visible; /* use visible or hidden */
 }
 
 /* is this needed as well?

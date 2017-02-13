@@ -5,34 +5,36 @@ shinyServer(function(input, output, session) {
   # Import segmented data
   ####################################################
   
-  # open upload window on start
-  observe({
-    
-    if(is.null(input$inputFile)){
-      showModal(
-        modalDialog(
-          fileInput('inputFile', label = NULL),
-          title = 'Upload file with segmented data',
-          footer = NULL,
-          fade = FALSE)
-      )
-    }
-  })
-  
-  # automatically close upload window after upload
-  observeEvent(input$inputFile, {
-    removeModal(session)
-  })
+  # # open upload window on start
+  # observe({
+  #   
+  #   if(is.null(input$inputFile)){
+  #     showModal(
+  #       modalDialog(
+  #         fileInput('inputFile', label = NULL),
+  #         title = 'Upload file with segmented data',
+  #         footer = NULL,
+  #         fade = FALSE)
+  #     )
+  #   }
+  # })
+  # 
+  # # automatically close upload window after upload
+  # observeEvent(input$inputFile, {
+  #   removeModal(session)
+  # })
   
   # update data file
   data <- reactive({
     
-    if(is.null(input$inputFile)){
-      out <- read.csv2('start.csv', row.names = NULL)
-      
-    } else{
-      out <- read.csv2(input$inputFile$datapath, row.names = NULL)
-    }
+    out <- read.csv2('~/Work/Ovule analysis/segmented.csv')
+    
+    # if(is.null(input$inputFile)){
+    #   out <- read.csv2('start.csv', row.names = NULL)
+    #   
+    # } else{
+    #   out <- read.csv2(input$inputFile$datapath, row.names = NULL)
+    # }
     return(out)
   })
   
@@ -245,6 +247,56 @@ shinyServer(function(input, output, session) {
                        select = prevVal2)
   })
   
+  
+  ####################################################
+  # Create vipdata reactive table
+  ####################################################
+  #  add 'Viewpoints'
+  #   if the 'no viewpoints' option is set, then add one 'invisible' viewpoint to all the rows
+  
+  vipdata <- reactive({
+    
+    if(cellviews$usevp == 'yes'){
+      
+      x <- viewpoint(data(),
+                     name_vp1 = cellviews$vp1_name, vp1 = cellviews$viewpoint1,
+                     name_vp2 = cellviews$vp2_name, vp2 = cellviews$viewpoint2,
+                     name_vp3 = cellviews$vp3_name, vp3 = cellviews$viewpoint3)
+      
+    } else if(cellviews$usevp == 'no'){
+      
+      x <- viewpoint(data(), name_vp1 = '', vp1 = cellviews$Label,
+                     name_vp2 = NULL, name_vp3 = NULL)
+    }
+    
+    return(x)
+  })
+  
+  ####################################################
+  # Subset vipdata
+  ####################################################
+  
+  subsetdata <- reactive({
+    
+    x <- vipdata()
+    
+    ##### subset based on genotype and stage
+    
+    x <- subset(x,
+                Genotype %in% input$Genotype &
+                  Stage %in% input$Stage)
+
+    # ##### subset based on SMC neighbour tag
+    # 
+    if(input$SMCneighb){
+      x <- x[x$neighbourSMC == 'SMC contact',]
+    }
+    
+    return(x)
+    
+  })
+
+  
   ####################################################
   # Create plotdata reactive dataset
   ####################################################
@@ -255,64 +307,35 @@ shinyServer(function(input, output, session) {
     if(input$Yaxis == 'Cell Number'){
       
       # Calculate number of different cells in each stack:
-      vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
-      filt.N.cells.stack <- countcells(data = data(), vars1)
+      #vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
+      vars1 <- c("Stack", "Stage", input$colorize, input$group)
+      
+      filt.N.cells.stack <- countcells(data = subsetdata(), vars1)
       
       x <- cbind(Type = 'Cell Number', filt.N.cells.stack)
       names(x)[names(x) == 'N'] <- 'Value'
       
-    } else x <- data()
-    
-    return(x)
-  })
-  
-  
-  ####################################################
-  # Create vipdata reactive table
-  ####################################################
-  #  add 'Viewpoints'
-  #   if the 'no viewpoints' option is set, then add one 'invisible' viewpoint to all the rows
-  
-  #   subset based on tags
-  
-  vipdata <- reactive({
-    
-    if(cellviews$usevp == 'yes'){
-      
-      x <- viewpoint(plotdata(),
-                     name_vp1 = cellviews$vp1_name, vp1 = cellviews$viewpoint1,
-                     name_vp2 = cellviews$vp2_name, vp2 = cellviews$viewpoint2,
-                     name_vp3 = cellviews$vp3_name, vp3 = cellviews$viewpoint3)
-      
-    } else if(cellviews$usevp == 'no'){
-      
-      x <- viewpoint(plotdata(), name_vp1 = '', vp1 = cellviews$Label,
-                     name_vp2 = NULL, name_vp3 = NULL)
-    }
-    
-    
-    ##### subset based on SMC neighbour tag
-    
-    if(input$SMCneighb){
-      x <- x[x$neighbourSMC == 'SMC contact',]
+    } else{
+      x <- subsetdata()
     }
     
     return(x)
   })
-  
   
   ####################################################
   # Create gg_data reactive dataset
   ####################################################
   
-  # subset of vip_data() values that are plotted
+  # subset of plotdata() values that are plotted
   # keep it separate so that color map is not changed when subsetting plots
   
   gg_data <- reactive({
-    x <- subset(vipdata(),
-                Genotype %in% input$Genotype &
-                  Stage %in% input$Stage &
+    
+    x <- subset(plotdata(),
+                # Genotype %in% input$Genotype &
+                #   Stage %in% input$Stage &
                   Type == input$Yaxis)
+    
     return(x)
   })
   
@@ -328,8 +351,8 @@ shinyServer(function(input, output, session) {
       x <- customcolmap
       
     } else{
-      
-      x <- col.map(data = vipdata(),
+
+      x <- col.map(data = plotdata(),
                    colorize = input$colorize,
                    brew = cellviews$brewery)
     }
@@ -354,13 +377,13 @@ shinyServer(function(input, output, session) {
         'qualitative' = rownames(
           subset(brewer.pal.info,
                  category %in% 'qual' &
-                   maxcolors >= length(levels(vipdata()[, input$colorize]))
+                   maxcolors >= length(levels(subsetdata()[, input$colorize]))
           )
         ),
         'sequential' = rownames(
           subset(brewer.pal.info,
                  category %in% 'seq' &
-                   maxcolors >= length(levels(vipdata()[, input$colorize]))
+                   maxcolors >= length(levels(subsetdata()[, input$colorize]))
           )
         )
       )
@@ -569,7 +592,22 @@ shinyServer(function(input, output, session) {
   #############################################
   #############################################
   
-  # output$debug <- renderPrint({
-  # })
+  output$debug <- renderPrint({
+    
+    x1 <- subset(plotdata(),
+                 # Genotype %in% input$Genotype &
+                 #   Stage %in% input$Stage &
+                 Type == input$Yaxis)
+    
+    x2 <- subset(plotdata(),
+                 Type == input$Yaxis)
+    
+    print(paste(
+      'subset on type only', nrow(x1), 'subset on type + gen + stage', nrow(x2)
+    )
+    )
+    
+    
+  })
   
 })
