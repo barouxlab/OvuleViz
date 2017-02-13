@@ -56,8 +56,28 @@ shinyUI(
                    actionButton('graphOptsBut', 'More options',
                                 class = "moreOpt_style"),
                    
+                   conditionalPanel(
+                     "input.manualY == 1",
+                     div('Manual scale selected. Values outside the selected range will not be visible',
+                         style = "color:red")
+                   ),
+                   
                    bsModal('graphOpts', 'Graph options', 'graphOptsBut',
                            size = 'small',
+                           
+                           checkboxInput('manualY', 'Manually set Y-axis range'),
+                           
+                           conditionalPanel(
+                             
+                             "input.manualY == 1",
+                             
+                             textInput('minY', label = 'Minimum'),
+                             
+                             textInput('maxY', label = 'Maximum'),
+                             
+                             tags$hr()
+                           ),
+                           
                            
                            checkboxInput('logY', label = 'log y-axis',
                                          value = FALSE),

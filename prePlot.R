@@ -8,4 +8,12 @@
     p <- p + facet_wrap(input$group, ncol = input$ncols)
   }
   
+  if(input$manualY == TRUE){
+    p <- p + coord_cartesian(ylim = c(as.numeric(input$minY),
+                                      as.numeric(input$maxY))
+                             )
+  }
+  
   p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
+  
+
