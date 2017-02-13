@@ -73,9 +73,14 @@ shinyServer(function(input, output, session) {
       
       footer = tagList(shiny::actionButton('submitCell_But', "Apply changes",
                                            class = 'applyBut_style'),
-                       shiny::modalButton("Close"))
+                       shiny::modalButton("Cancel"))
     )
     )
+  })
+  
+  # automatically close upload window after upload
+  observeEvent(input$submitCell_But, {
+    removeModal(session)
   })
   
   
