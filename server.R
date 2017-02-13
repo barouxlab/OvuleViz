@@ -530,7 +530,7 @@ shinyServer(function(input, output, session) {
       av_data <- reactive({
         ddply(gg_data(), vars, summarise,
               mean = mean(Value),
-              sd   = sd(Value),
+              sd   = sem(Value),
               n = length(Value))
       })
       

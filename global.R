@@ -119,6 +119,9 @@ handle <- function(plot, width, height){
     )})
 }
 
+# calculate standard error
+sem <- function(x) sd(x)/sqrt(length(x))
+
 ##############################################################
 # Options colorize and group menus
 ##############################################################

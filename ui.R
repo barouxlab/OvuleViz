@@ -173,7 +173,7 @@ shinyUI(
                              
                              tabPanel('means',
                                       
-                                      helpText('Error bars represent standard deviation.'),
+                                      helpText('Error bars represent the standard error of the mean.'),
                                       fluidRow(
                                         actionButton('MeanTabButton', label = 'View as table',
                                                      class = 'downloadBut_style')
