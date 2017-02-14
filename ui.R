@@ -1,6 +1,6 @@
 shinyUI(
   navbarPage(
-    "v1.1", theme = shinytheme("cosmo"),
+    "v1.2", theme = shinytheme("cosmo"),
     
     tabPanel(
       "Plots",
@@ -8,7 +8,7 @@ shinyUI(
         includeCSS("www/styles.css"),
         
         fluidRow(
-          verbatimTextOutput('debug'),
+          #verbatimTextOutput('debug'),
           
           column(3,
                  fluidRow(
@@ -81,7 +81,7 @@ shinyUI(
                            checkboxInput('showPval', label = 'Show p-values',
                                          value = FALSE),
                            
-                           helpText('The p-value for is for a Kruskal–Wallis analysis (one-way ANOVA on ranks) between the factors that are split by color.
+                           helpText('The p-value for is for a Kruskal–Wallis test (one-way ANOVA on ranks) between the factors that are split by color.
 All the values with the same color will be pooled in each subplot. If any one of the subplots has only values from a single color, none of the p-values will be calculated.'),
                            
                            checkboxInput('logY', label = 'log y-axis',

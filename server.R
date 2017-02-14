@@ -5,36 +5,34 @@ shinyServer(function(input, output, session) {
   # Import segmented data
   ####################################################
   
-  # # open upload window on start
-  # observe({
-  #   
-  #   if(is.null(input$inputFile)){
-  #     showModal(
-  #       modalDialog(
-  #         fileInput('inputFile', label = NULL),
-  #         title = 'Upload file with segmented data',
-  #         footer = NULL,
-  #         fade = FALSE)
-  #     )
-  #   }
-  # })
-  # 
-  # # automatically close upload window after upload
-  # observeEvent(input$inputFile, {
-  #   removeModal(session)
-  # })
+  # open upload window on start
+  observe({
+
+    if(is.null(input$inputFile)){
+      showModal(
+        modalDialog(
+          fileInput('inputFile', label = NULL),
+          title = 'Upload file with segmented data',
+          footer = NULL,
+          fade = FALSE)
+      )
+    }
+  })
+
+  # automatically close upload window after upload
+  observeEvent(input$inputFile, {
+    removeModal(session)
+  })
   
   # update data file
   data <- reactive({
     
-    out <- read.csv2('~/Work/Ovule analysis/segmented.csv')
-    
-    # if(is.null(input$inputFile)){
-    #   out <- read.csv2('start.csv', row.names = NULL)
-    #   
-    # } else{
-    #   out <- read.csv2(input$inputFile$datapath, row.names = NULL)
-    # }
+    if(is.null(input$inputFile)){
+      out <- read.csv2('start.csv', row.names = NULL)
+
+    } else{
+      out <- read.csv2(input$inputFile$datapath, row.names = NULL)
+    }
     return(out)
   })
   
@@ -335,7 +333,7 @@ shinyServer(function(input, output, session) {
   ##############################################################
   
   # subset of plotdata() values that are plotted
-  # keep it separate so that color map is not changed when subsetting plots
+  # inherited from previous versions, maybe not required anymore
   
   gg_data <- reactive({
     
@@ -639,30 +637,6 @@ shinyServer(function(input, output, session) {
   ##############################################################
   
   output$debug <- renderPrint({
-    print(paste('nrows ggdata', nrow(gg_data())))
-    print(head(gg_data()))
-    print('--------')
-    
-    f <- paste('Value', '~', input$colorize)
-    
-    print(summary.aov(do.call("aov", list(as.formula(f), data = gg_data()))))
-    print('--------')
-    print(calcAnova(gg_data(), input$colorize))
-    
-    
-    # x1 <- subset(plotdata(),
-    #              # Genotype %in% input$Genotype &
-    #              #   Stage %in% input$Stage &
-    #              Type == input$Yaxis)
-    # 
-    # x2 <- subset(plotdata(),
-    #              Type == input$Yaxis)
-    # 
-    # print(paste(
-    #   'subset on type only', nrow(x1), 'subset on type + gen + stage', nrow(x2)
-    # )
-    # )
-    # 
-    
+
   })
 })
