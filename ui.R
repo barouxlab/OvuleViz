@@ -147,9 +147,9 @@ All the values with the same color will be pooled in each subplot. If any one of
                           ),
                           
                           strong('Tags'),
-                          
+
                           checkboxInput('SMCneighb',
-                                        label = 'only SMC neighbour cells',
+                                        label = 'Use only SMC neighbour cells',
                                         value = FALSE)
                    ),
                    column(6,
