@@ -7,7 +7,7 @@ shinyServer(function(input, output, session) {
   
   # open upload window on start
   observe({
-
+    
     if(is.null(input$inputFile)){
       showModal(
         modalDialog(
@@ -18,7 +18,7 @@ shinyServer(function(input, output, session) {
       )
     }
   })
-
+  
   # automatically close upload window after upload
   observeEvent(input$inputFile, {
     removeModal(session)
@@ -29,7 +29,7 @@ shinyServer(function(input, output, session) {
     
     if(is.null(input$inputFile)){
       out <- read.csv2('start.csv', row.names = NULL)
-
+      
     } else{
       out <- read.csv2(input$inputFile$datapath, row.names = NULL)
     }
@@ -637,6 +637,6 @@ shinyServer(function(input, output, session) {
   ##############################################################
   
   output$debug <- renderPrint({
-
+    
   })
 })

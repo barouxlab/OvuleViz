@@ -73,8 +73,8 @@ if(length(levels(data$neighbourSMC)) > 2){
 }
 
 # reformat neightbour SMC field
-data$neighbourSMC <- factor(data$neighbourSMC, levels = c('SMC contact', 'n'))
-data$neighbourSMC[is.na(data$neighbourSMC)] <- 'n'
+data$neighbourSMC <- factor(data$neighbourSMC, levels = c('SMC contact', 'no SMC contact'))
+data$neighbourSMC[is.na(data$neighbourSMC)] <- 'no SMC contact'
 
 
 ############################################################
