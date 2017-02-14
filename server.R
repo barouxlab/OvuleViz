@@ -38,9 +38,9 @@ shinyServer(function(input, output, session) {
     return(out)
   })
   
-  #############################################
-  # update selectors based on data
-  #############################################
+  ##############################################################
+  # update selectors based on levels present in data()
+  ##############################################################
   
   observeEvent(data(), {
     updateSelectInput(session, "Yaxis",
@@ -55,6 +55,19 @@ shinyServer(function(input, output, session) {
                              selected = levels(data()$Stage))
   })
   
+  #### Select all button
+  
+  observeEvent(input$Stage_goButton, {
+    
+    if(length(input$Stage) == length(levels(data()$Stage))){
+      sel <- levels(data()$Stage)[1] } else sel <- levels(data()$Stage)
+      
+      updateCheckboxGroupInput(session, inputId = 'Stage',
+                               selected = sel)
+  })
+  
+  ##############################################################
+  # Set modal for cell and viewpoint selection
   ##############################################################
   
   observeEvent(input$setCellsBut, {
@@ -85,6 +98,7 @@ shinyServer(function(input, output, session) {
   
   
   ##############################################################
+  # Selectors for cell types / viewpoints
   ##############################################################
   
   output$views <- renderUI({
@@ -144,10 +158,9 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  ##############################################################
-  # do not allow overlap between viewpoint selections
+  
+  #### do not allow overlap between viewpoint selections
   # (would lead to probs with ggplot facet wraping):
-  ##############################################################
   
   observe({
     
@@ -180,8 +193,8 @@ shinyServer(function(input, output, session) {
                              select = input$viewpoint3)
   })
   
-  #############################################
-  #############################################
+  
+  #### Select all button
   
   observeEvent(input$Label_goButton, {
     
@@ -193,17 +206,8 @@ shinyServer(function(input, output, session) {
                            selected = sel)
   })
   
-  observeEvent(input$Stage_goButton, {
-    
-    if(length(input$Stage) == length(levels(data()$Stage))){
-      sel <- levels(data()$Stage)[1] } else sel <- levels(data()$Stage)
-      
-      updateCheckboxGroupInput(session, inputId = 'Stage',
-                               selected = sel)
-  })
   
-  
-  #############################################
+  #### Update cellviews reactive according to cell type / viewpoint electors
   
   observeEvent(input$submitCell_But, {
     
@@ -222,9 +226,9 @@ shinyServer(function(input, output, session) {
     cellviews$brewery <- input$brewery
   })
   
-  #############################################
+  ##############################################################
   # update group and colorize choices depending on viewpoint use
-  #############################################
+  ##############################################################
   
   observe({
     
@@ -253,11 +257,13 @@ shinyServer(function(input, output, session) {
   })
   
   
-  ####################################################
+  ##############################################################
   # Create vipdata reactive table
-  ####################################################
-  #  add 'Viewpoints'
-  #   if the 'no viewpoints' option is set, then add one 'invisible' viewpoint to all the rows
+  ##############################################################
+  
+  # Add 'Viewpoints'.
+  # If the 'no viewpoints' option is set, add
+  # one invisible viewpoint to all the rows.
   
   vipdata <- reactive({
     
@@ -277,22 +283,18 @@ shinyServer(function(input, output, session) {
     return(x)
   })
   
-  ####################################################
-  # Subset vipdata
-  ####################################################
+  ##############################################################
+  # Create subsetdata reactive dataset
+  ##############################################################
+  
+  # subset vipdata based on the selected genotype, stage and tags
   
   subsetdata <- reactive({
     
-    x <- vipdata()
-    
-    ##### subset based on genotype and stage
-    
-    x <- subset(x,
+    x <- subset(vipdata(),
                 Genotype %in% input$Genotype &
                   Stage %in% input$Stage)
-
-    # ##### subset based on SMC neighbour tag
-    # 
+    
     if(input$SMCneighb){
       x <- x[x$neighbourSMC == 'SMC contact',]
     }
@@ -300,19 +302,20 @@ shinyServer(function(input, output, session) {
     return(x)
     
   })
-
   
-  ####################################################
+  
+  ##############################################################
   # Create plotdata reactive dataset
-  ####################################################
-  #   depending on the y-axis variable chosen, defines the dataset to plot
+  ##############################################################
+  
+  # depending on the y-axis variable chosen, defines the dataset to plot
+  # (i.e. Cell number or any of the others)
   
   plotdata <- reactive({
     
     if(input$Yaxis == 'Cell Number'){
       
       # Calculate number of different cells in each stack:
-      #vars1 <- c("Stack", "Genotype", "Stage", "Labels", 'neighbourSMC')
       vars1 <- c("Stack", "Stage", input$colorize, input$group)
       
       filt.N.cells.stack <- countcells(data = subsetdata(), vars1)
@@ -327,9 +330,9 @@ shinyServer(function(input, output, session) {
     return(x)
   })
   
-  ####################################################
+  ##############################################################
   # Create gg_data reactive dataset
-  ####################################################
+  ##############################################################
   
   # subset of plotdata() values that are plotted
   # keep it separate so that color map is not changed when subsetting plots
@@ -339,15 +342,15 @@ shinyServer(function(input, output, session) {
     x <- subset(plotdata(),
                 # Genotype %in% input$Genotype &
                 #   Stage %in% input$Stage &
-                  Type == input$Yaxis)
+                Type == input$Yaxis)
     
     return(x)
   })
   
   
-  ####################################################
-  # set map for color values
-  ####################################################
+  ##############################################################
+  # Set map for color values
+  ##############################################################
   
   # Define color map: custom or the one generated by 'brewery'
   colormap <- reactive({
@@ -356,7 +359,7 @@ shinyServer(function(input, output, session) {
       x <- customcolmap
       
     } else{
-
+      
       x <- col.map(data = plotdata(),
                    colorize = input$colorize,
                    brew = cellviews$brewery)
@@ -364,9 +367,9 @@ shinyServer(function(input, output, session) {
     return(x)
   })
   
-  ####################################################
+  ##############################################################
   # Update color scheme choices depending on colorize factor
-  ####################################################
+  ##############################################################
   
   observe({
     
@@ -411,16 +414,23 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  #####################################
-  ##########################################
-  ##############################################
-  ###################################################
   
-  # get value for plot height
+  ##############################################################
+  ##############################################################
+  ##############################################################
+  
+  
+  
+  ##############################################################
+  # Set value for plot height
+  ##############################################################
+  
   plheight <- reactive(as.numeric(input$plheight))
   
-  ####################################################
-  ####################################################
+  
+  ##############################################################
+  # Boxplot tab
+  ##############################################################
   
   observe({
     
@@ -431,6 +441,11 @@ shinyServer(function(input, output, session) {
         colormap()
         source('prePlot.R', local = TRUE)
         p <- p + geom_boxplot(color = 'grey20', group = input$colorize)
+        
+        if(input$showPval){
+          p <- addANOVA(p, gg_data(), input$group, input$colorize)
+        }
+        
         return(p)
       })
       
@@ -442,8 +457,9 @@ shinyServer(function(input, output, session) {
   })
   
   
-  #############################################
-  #############################################
+  ##############################################################
+  # Scatterplot tab
+  ##############################################################
   
   observe({
     
@@ -455,6 +471,11 @@ shinyServer(function(input, output, session) {
         source('prePlot.R', local = TRUE)
         p <- p + geom_point(pch = 21, color =  'grey40', alpha = 0.7,
                             position = position_jitterdodge())
+        
+        if(input$showPval){
+          p <- addANOVA(p, gg_data(), input$group, input$colorize)
+        }
+        
         return(p)
       })
       
@@ -464,8 +485,9 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  #############################################
-  #############################################
+  ##############################################################
+  # Interactive plotly plot
+  ##############################################################
   
   observeEvent(input$interact, {
     
@@ -483,8 +505,9 @@ shinyServer(function(input, output, session) {
     )
   })
   
-  #############################################
-  #############################################
+  ##############################################################
+  # Histogram tab
+  ##############################################################
   
   observe({
     
@@ -492,12 +515,10 @@ shinyServer(function(input, output, session) {
       
       pl_h <- reactive({
         
-        # Bug? Have to call colormap() here because it was not active inside ggplot function!
-        colormap()
-        
         p <- ggplot(data = gg_data(), aes_string('Value', fill = input$colorize)) +
           facet_wrap(input$group, ncol = input$ncols) +
           scale_fill_manual(values = colormap(), name = NULL)
+        
         
         if(input$density == 'counts'){
           p <- p + geom_histogram(position = 'dodge', bins = input$bin)
@@ -507,6 +528,10 @@ shinyServer(function(input, output, session) {
         }
         
         p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
+        
+        if(input$showPval){
+          p <- addANOVA(p, gg_data(), input$group, input$colorize)
+        }
         
         return(p)
       })
@@ -518,8 +543,9 @@ shinyServer(function(input, output, session) {
   })
   
   
-  #############################################
-  #############################################
+  ##############################################################
+  # Means tab
+  ##############################################################
   
   observe({
     
@@ -550,13 +576,17 @@ shinyServer(function(input, output, session) {
           scale_color_manual(values = colormap(), name = NULL) +
           scale_fill_manual(values = colormap(), name = NULL)
         
-        if(input$manualY == TRUE){
+        if(input$manualY){
           p <- p + coord_cartesian(ylim = c(as.numeric(input$minY),
                                             as.numeric(input$maxY))
           )
         }
         
         p <- ggoptions(p, input$Yaxis, input$logY, input$gtheme)
+        
+        if(input$showPval){
+          p <- addANOVA(p, gg_data(), input$group, input$colorize)
+        }
         
         return(p)
         
@@ -575,8 +605,9 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  #############################################
-  #############################################
+  ##############################################################
+  # gg_data table tab
+  ##############################################################
   
   output$download_gg_data <- downloadHandler(
     filename = 'data.csv',
@@ -584,8 +615,10 @@ shinyServer(function(input, output, session) {
   
   output$gg_data_table <- renderDataTable(gg_data())
   
-  #############################################
-  #############################################
+  
+  ##############################################################
+  # Cell number table tab
+  ##############################################################
   
   output$cell_numb_stack <- renderDataTable(
     
@@ -595,30 +628,41 @@ shinyServer(function(input, output, session) {
           Number_stacks = length(unique(Stack)))
   )
   
-  #############################################
-  #############################################
+  ##############################################################
+  # All data tab
+  ##############################################################
   
   output$alldata <- renderDataTable(data())
   
-  #############################################
-  #############################################
+  ##############################################################
+  # Debug tab
+  ##############################################################
   
   output$debug <- renderPrint({
+    print(paste('nrows ggdata', nrow(gg_data())))
+    print(head(gg_data()))
+    print('--------')
     
-    x1 <- subset(plotdata(),
-                 # Genotype %in% input$Genotype &
-                 #   Stage %in% input$Stage &
-                 Type == input$Yaxis)
+    f <- paste('Value', '~', input$colorize)
     
-    x2 <- subset(plotdata(),
-                 Type == input$Yaxis)
+    print(summary.aov(do.call("aov", list(as.formula(f), data = gg_data()))))
+    print('--------')
+    print(calcAnova(gg_data(), input$colorize))
     
-    print(paste(
-      'subset on type only', nrow(x1), 'subset on type + gen + stage', nrow(x2)
-    )
-    )
     
+    # x1 <- subset(plotdata(),
+    #              # Genotype %in% input$Genotype &
+    #              #   Stage %in% input$Stage &
+    #              Type == input$Yaxis)
+    # 
+    # x2 <- subset(plotdata(),
+    #              Type == input$Yaxis)
+    # 
+    # print(paste(
+    #   'subset on type only', nrow(x1), 'subset on type + gen + stage', nrow(x2)
+    # )
+    # )
+    # 
     
   })
-  
 })

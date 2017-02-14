@@ -123,6 +123,62 @@ handle <- function(plot, width, height){
 sem <- function(x) sd(x)/sqrt(length(x))
 
 ##############################################################
+# ANOVA
+##############################################################
+
+# Calculate p-value for full model
+
+calcAnova <- function(x, variable){
+  # check http://www.gettinggeneticsdone.com/2011/01/rstats-function-for-extracting-f-test-p.html
+  
+  f <- paste('Value', '~', variable)
+  anova <- do.call("aov", list(as.formula(f), data = x))
+  fst <- summary.lm(anova)$fstatistic
+  p <- pf(fst[1], fst[2], fst[3], lower.tail = F)
+  attributes(p) <- NULL
+  return(paste('p =', signif(p, 3)))
+}
+
+# Potential alternative: non-parametric ANOVA
+calcKruskal <- function(x, variable){
+  f <- paste('Value', '~', variable)
+  k <- do.call("kruskal.test", list(as.formula(f), data = x))
+  p <- k$p.value
+  return(paste('p =', signif(p, 3)))
+}
+
+# Distribute p-values through facets
+
+facet_ANOVA <- function(x, facet, fill) {
+  df <- ddply(x,
+              facet,
+              calcAnova, variable = fill)
+  
+  names(df) <- c(names(df)[1], 'pval')
+  return(df)
+}
+
+# add ANOVA p-value to plots
+addANOVA <- function(x = p, origin = data, face, col){
+  
+  xrange <- ggplot_build(x)$layout$panel_ranges[[1]]$x.range
+  yrange <- ggplot_build(x)$layout$panel_ranges[[1]]$y.range
+  xpos <- xrange[1] + (xrange[2] - xrange[1])*0.3
+  ypos <- yrange[1] + (yrange[2] - yrange[1])*0.9
+  
+  try({
+    x <- x + geom_text(data = facet_ANOVA(origin,
+                                        face, 
+                                        col),
+                     x = xpos, y = ypos,
+                     size = rel(5), color = 'grey70',
+                     aes(label = pval),
+                     inherit.aes = FALSE)
+  })
+  return(x)
+}
+
+##############################################################
 # Options colorize and group menus
 ##############################################################
 

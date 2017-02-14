@@ -78,6 +78,11 @@ shinyUI(
                              tags$hr()
                            ),
                            
+                           checkboxInput('showPval', label = 'Show p-values',
+                                         value = FALSE),
+                           
+                           helpText('The p-value for is for a one-way ANOVA analysis between the factors that are split by color
+                                    (all the groups in the X-axis with the same color will be pooled). If any one of the plots has values with a single color, none of the p-values will be calculated.'),
                            
                            checkboxInput('logY', label = 'log y-axis',
                                          value = FALSE),
