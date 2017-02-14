@@ -152,7 +152,7 @@ calcKruskal <- function(x, variable){
 facet_ANOVA <- function(x, facet, fill) {
   df <- ddply(x,
               facet,
-              calcAnova, variable = fill)
+              calcKruskal, variable = fill)
   
   names(df) <- c(names(df)[1], 'pval')
   return(df)
