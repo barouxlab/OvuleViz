@@ -81,9 +81,6 @@ shinyUI(
                            checkboxInput('showPval', label = 'Show p-values',
                                          value = FALSE),
                            
-                           helpText('The p-value for is for a Kruskal–Wallis test (one-way ANOVA on ranks) between the factors that are split by color.
-All the values with the same color will be pooled in each subplot. If any one of the subplots has only values from a single color, none of the p-values will be calculated.'),
-                           
                            checkboxInput('logY', label = 'log y-axis',
                                          value = FALSE),
                            
