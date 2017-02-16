@@ -15,8 +15,7 @@ runGitHub('OvuleViz', 'barouxlab')
 ```R
 library(RCurl)
 u <- 'https://raw.githubusercontent.com/barouxlab/OvuleViz/master/getData.R'
-script <- getURL(u, ssl.verifypeer = FALSE)
-eval(parse(text = script))
+eval(parse(text = getURL(u, ssl.verifypeer = FALSE)))
 ```
 
 ## Notes
