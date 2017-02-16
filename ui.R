@@ -78,13 +78,13 @@ shinyUI(
                              tags$hr()
                            ),
                            
-                           checkboxInput('showPval', label = 'Show p-values',
+                           checkboxInput('showPval', label = 'Show p-values from Kruskal–Wallis test',
                                          value = FALSE),
                            
-                           checkboxInput('logY', label = 'log y-axis',
+                           checkboxInput('logY', label = 'Log y-axis',
                                          value = FALSE),
                            
-                           checkboxInput('gtheme', label = 'grey background',
+                           checkboxInput('gtheme', label = 'Grey background',
                                          value = FALSE),
                            
                            helpText("Color scheme (http://colorbrewer2.org)"),
