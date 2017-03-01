@@ -566,13 +566,18 @@ shinyServer(function(input, output, session) {
                                                  color = input$colorize,
                                                  group = input$colorize,
                                                  fill = input$colorize)) +
-          facet_wrap(input$group, ncol = input$ncols) +
           geom_errorbar(aes(y = mean, ymin = mean - sd, ymax = mean + sd),
                         position = dodge, width = 0.2, color = 'grey') +
           geom_line(position = dodge) +
           geom_point(size = rel(4), pch = 21, color = 'black', position = dodge) +
           scale_color_manual(values = colormap(), name = NULL) +
           scale_fill_manual(values = colormap(), name = NULL)
+        
+        if(input$group == 'Stage'){
+          p <- p + facet_wrap(input$group, ncol = input$ncols, scale = 'free_x')
+        } else {
+          p <- p + facet_wrap(input$group, ncol = input$ncols)
+        }
         
         if(input$manualY){
           p <- p + coord_cartesian(ylim = c(as.numeric(input$minY),
