@@ -3,7 +3,8 @@
     scale_fill_manual(values = colormap(), name = NULL)
   
   if(input$group == 'Stage'){
-    p <- p + facet_wrap(input$group, ncol = input$ncols, scale = 'free_x')
+    p <- p + facet_wrap(input$group, ncol = input$ncols, scale = 'free_x') +
+      theme(axis.text.x = element_blank())
   } else {
     p <- p + facet_wrap(input$group, ncol = input$ncols)
   }
