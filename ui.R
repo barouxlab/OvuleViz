@@ -1,6 +1,6 @@
 shinyUI(
   navbarPage(
-    "v1.2", theme = shinytheme("cosmo"),
+    "v1.2.1", theme = shinytheme("cosmo"),
     
     tabPanel(
       "Plots",
