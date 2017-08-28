@@ -448,7 +448,15 @@ shinyServer(function(input, output, session) {
       })
       
       output$plotBoxplot <- renderPlot(pl_bx(), height = plheight)
-      output$getpdf_bx <- handle(plot = pl_bx(), width = input$getpdf_bx_width,height = input$getpdf_bx_height)
+      
+      output$getpdf_bx <- downloadHandler(filename = 'plot.pdf',
+                                          content = function(file) {
+                                            ggsave(file, plot = pl_bx(),
+                                                   device = 'pdf', units = "cm",
+                                                   width = input$getpdf_bx_width,
+                                                   height = input$getpdf_bx_height)
+                                          })
+      
       output$UIgetpdf_bx <- renderUI(tagModal(x = 'getpdf_bx'))
       
     }
@@ -478,7 +486,14 @@ shinyServer(function(input, output, session) {
       })
       
       output$plotJitter <- renderPlot(pl_jit(), height = plheight)
-      output$getpdf_jit <- handle(plot = pl_jit(), width = input$getpdf_jit_width,height = input$getpdf_jit_height)
+      
+      output$getpdf_jit <- downloadHandler(filename = 'plot.pdf',
+                                          content = function(file) {
+                                            ggsave(file, plot = pl_jit(),
+                                                   device = 'pdf', units = "cm",
+                                                   width = input$getpdf_jit_width,
+                                                   height = input$getpdf_jit_height)
+                                          })
       output$UIgetpdf_jit <- renderUI(tagModal(x = 'getpdf_jit'))
     }
   })
@@ -535,7 +550,14 @@ shinyServer(function(input, output, session) {
       })
       
       output$plotHist <- renderPlot(pl_h(), height = plheight)
-      output$getpdf_h <- handle(plot = pl_h(), width = input$getpdf_h_width, height = input$getpdf_h_height)
+      
+      output$getpdf_h <- downloadHandler(filename = 'plot.pdf',
+                                          content = function(file) {
+                                            ggsave(file, plot = pl_h(),
+                                                   device = 'pdf', units = "cm",
+                                                   width = input$getpdf_h_width,
+                                                   height = input$getpdf_h_height)
+                                          })
       output$UIgetpdf_h <- renderUI(tagModal(x = 'getpdf_h'))
     }
   })
@@ -604,7 +626,14 @@ shinyServer(function(input, output, session) {
         content = function(file) {write.csv2(av_data(), file, quote = FALSE, row.names = FALSE)})
       
       output$plotMeans <- renderPlot(pl_mn(), height = plheight)
-      output$getpdf_mn <- handle(plot = pl_mn(), width = input$getpdf_mn_width,height = input$getpdf_mn_height)
+      
+      output$getpdf_mn <- downloadHandler(filename = 'plot.pdf',
+                                          content = function(file) {
+                                            ggsave(file, plot = pl_mn(),
+                                                   device = 'pdf', units = "cm",
+                                                   width = input$getpdf_mn_width,
+                                                   height = input$getpdf_mn_height)
+                                          })
       output$UIgetpdf_mn <- renderUI(tagModal(x = 'getpdf_mn'))
     }
   })
@@ -643,6 +672,6 @@ shinyServer(function(input, output, session) {
   ##############################################################
   
   output$debug <- renderPrint({
-    
+
   })
 })
