@@ -83,13 +83,13 @@ viewpoint <- function(data = data,
 
 # A set of outputs sits in each tab with a plot.
 # That specific plot (pl())can then be downloaded using a downloadHandler
-# (handle function in Global.R) with custom values for height and width.
+# with custom values for height and width.
 
 # The download options window comes as a BsModal/action combination
 # (tagModal in Global.R, comprising 'getpdf_xxx' and 'getpdf_xxx_Button'), that also provides
 # the inputs for custom heigth and width ('getpdf_xxx_height' and 'getpdf_xxx_width').
 
-# Each tab calls a specfic handle() and a tagModal().
+# Each tab calls a specific downloadHandler and a tagModal().
 # This is because the same reactive cannot be used twice
 
 tagModal <- function(x){
@@ -106,17 +106,6 @@ tagModal <- function(x){
     actionButton(paste0(x, "_Button"), "Export PDF",
                  class = 'downloadBut_style')
   )
-}
-
-handle <- function(plot, width, height){
-  
-  downloadHandler(
-    filename = 'plot.pdf',
-    content = function(file) {ggsave(file, plot = plot,
-                                     device = 'pdf', units = "cm",
-                                     width = width,
-                                     height = height
-    )})
 }
 
 # calculate standard error
