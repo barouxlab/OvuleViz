@@ -413,10 +413,10 @@ shinyServer(function(input, output, session) {
   })
   
   
-  ##############################################################
-  ##############################################################
-  ##############################################################
   
+  ##############################################################
+  ##############################################################
+
   
   
   ##############################################################
@@ -424,7 +424,6 @@ shinyServer(function(input, output, session) {
   ##############################################################
   
   plheight <- reactive(as.numeric(input$plheight))
-  
   
   ##############################################################
   # Boxplot tab
@@ -582,7 +581,7 @@ shinyServer(function(input, output, session) {
       
       pl_mn <- reactive({
         
-        dodge <- position_dodge(width=0.3)
+        dodge <- position_dodge(width = 0.3)
         
         p <- ggplot(data = av_data(), aes_string('Stage', y = 'mean',
                                                  color = input$colorize,

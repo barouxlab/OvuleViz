@@ -6,7 +6,7 @@ if(!'pacman' %in% rownames(installed.packages())) install.packages('pacman')
 pacman::p_load(shiny, shinythemes, shinyBS, ggplot2, plotly, plyr, RColorBrewer)
 
 
-options(shiny.maxRequestSize = 50*1024^2) # Max upload size is 50Mbp
+options(shiny.maxRequestSize = 100*1024^2) # Max upload size is 100Mbp
 options(shiny.launch.browser = TRUE)
 
 ##############################################################
@@ -108,7 +108,9 @@ tagModal <- function(x){
   )
 }
 
+##############################################################
 # calculate standard error
+##############################################################
 sem <- function(x) sd(x)/sqrt(length(x))
 
 ##############################################################
